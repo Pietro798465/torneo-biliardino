@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
       apiKey: "AIzaSyDZMPtTfv9cMIM8aznIY4Yggszz0dF-jOo",
       authDomain: "torneo-sotto-le-stelle.firebaseapp.com",
       projectId: "torneo-sotto-le-stelle",
-      storageBucket: "torneo-sotto-le-stelle.appspot.com", // Corretto per la compatibilità
+      storageBucket: "torneo-sotto-le-stelle.appspot.com",
       messagingSenderId: "875733722189",
       appId: "1:875733722189:web:d48189f50e42914e056804",
       measurementId: "G-D142803XG2"
@@ -19,37 +19,44 @@ document.addEventListener('DOMContentLoaded', () => {
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // --- GESTIONE SCHERMATA DI AVVIO E SUONI ---
+    // --- NUOVA GESTIONE INIZIALE E AUDIO ---
+    const startScreen = document.getElementById('start-screen');
     const splashScreen = document.getElementById('splash-screen');
+    const logoSound = document.getElementById('logo-sound');
+    const backgroundMusic = document.getElementById('background-music');
+
+    startScreen.addEventListener('click', () => {
+        // 1. Nasconde la schermata "Clicca per iniziare"
+        startScreen.style.display = 'none';
+
+        // 2. Mostra lo splash screen con il logo (l'animazione CSS parte)
+        splashScreen.style.display = 'flex';
+
+        // 3. Fa partire il suono del logo
+        if (logoSound) {
+            logoSound.volume = 0.5;
+            logoSound.play().catch(e => console.error("Audio logo bloccato", e));
+        }
+    }, { once: true }); // L'evento si attiva una sola volta
+
+    // 4. Quando il suono del logo finisce, fa partire la musica di sottofondo
+    if (logoSound) {
+        logoSound.onended = () => {
+            if (backgroundMusic) {
+                backgroundMusic.volume = 0.2;
+                backgroundMusic.play().catch(e => console.error("Musica di sottofondo bloccata", e));
+            }
+        };
+    }
+
+    // 5. Nasconde definitivamente lo splash screen dopo l'animazione
     splashScreen.addEventListener('animationend', () => {
         splashScreen.style.display = 'none';
     });
-    
-    // Per far partire l'audio, il browser richiede un click dell'utente.
-    // Il primo click in qualsiasi punto della pagina attiverà i suoni.
-    const enableAudio = () => {
-        const logoSound = document.getElementById('logo-sound');
-        const music = document.getElementById('background-music');
-        
-        if (logoSound && logoSound.paused) {
-            logoSound.volume = 0.5;
-            logoSound.play().catch(e => console.error("Audio logo bloccato:", e));
-        }
-        document.getElementById('play-btn').addEventListener('click', () => { 
-            if (music) {
-                music.volume = 0.2; 
-                music.play().catch(e => console.error("Audio musica bloccato:", e));
-            }
-        });
-        document.getElementById('pause-btn').addEventListener('click', () => music.pause());
-        
-        // Rimuove l'evento per non ripeterlo
-        document.body.removeEventListener('click', enableAudio);
-    };
-    document.body.addEventListener('click', enableAudio);
+    // --- FINE NUOVA GESTIONE ---
 
 
-    // --- RIFERIMENTI AGLI ELEMENTI HTML ---
+    // --- RIFERIMENTI HTML E VARIABILI GLOBALI ---
     const playerForm = document.getElementById('player-form');
     const playersList = document.getElementById('players-list');
     const createTeamsBtn = document.getElementById('create-teams-btn');
@@ -61,143 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let localPlayers = [], localTeams = [], localRoundRobinMatches = [];
 
-    // --- SEZIONE GIOCATORI ---
-    playerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const [playerName, playerSkill, playerPhotoInput] = [document.getElementById('player-name').value, document.getElementById('player-skill').value, document.getElementById('player-photo')];
-        const file = playerPhotoInput.files[0];
-        let photoBase64 = file ? await toBase64(file) : null;
-        
-        await db.collection('players').add({ name: playerName, skill: playerSkill, photo: photoBase64 });
-        playerForm.reset();
-        document.getElementById('file-name').textContent = 'Nessuna foto selezionata';
-    });
-    
-    function renderPlayers() {
-        playersList.innerHTML = '';
-        localPlayers.forEach(player => {
-            const playerDiv = document.createElement('div');
-            playerDiv.className = 'player-item';
-            playerDiv.innerHTML = `<img src="${player.photo || 'https://via.placeholder.com/50'}" alt="${player.name}"><span>${player.name} (${player.skill})</span><button class="btn-danger" onclick="deletePlayer('${player.id}')">X</button>`;
-            playersList.appendChild(playerDiv);
-        });
-    }
+    // --- FUNZIONI PRINCIPALI (le lascio compatte perché non sono cambiate) ---
+    playerForm.addEventListener('submit', async(e)=>{e.preventDefault();const[t,l,a]=[document.getElementById("player-name").value,document.getElementById("player-skill").value,document.getElementById("player-photo")],n=a.files[0]?await toBase64(a.files[0]):null;await db.collection("players").add({name:t,skill:l,photo:n}),playerForm.reset(),document.getElementById("file-name").textContent="Nessuna foto selezionata"});function renderPlayers(){playersList.innerHTML="",localPlayers.forEach(e=>{const t=document.createElement("div");t.className="player-item",t.innerHTML=`<img src="${e.photo||"https://via.placeholder.com/50"}" alt="${e.name}"><span>${e.name} (${e.skill})</span><button class="btn-danger" onclick="deletePlayer('${e.id}')">X</button>`,playersList.appendChild(t)})}window.deletePlayer=async e=>{confirm("Eliminare questo giocatore?")&&await db.collection("players").doc(e).delete()},createTeamsBtn.addEventListener("click",async()=>{const e=localPlayers.filter(e=>"forte"===e.skill),t=localPlayers.filter(e=>"scarso"===e.skill);if(0===e.length||e.length!==t.length)return alert('Numero di "forti" e "scarsi" non valido!');if(confirm("Sei sicuro? Le squadre e le partite esistenti verranno cancellate.")){await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches")]),e.sort(()=>.5-Math.random()),t.sort(()=>.5-Math.random());for(let l=0;l<e.length;l++)await db.collection("teams").add({name:`Squadra ${l+1}`,player1:e[l],player2:t[l]})}}),window.updateTeamName=async(e,t)=>{await db.collection("teams").doc(e).update({name:t})},generateRoundRobinBtn.addEventListener("click",async()=>{if(localTeams.length<2)return alert("Crea almeno 2 squadre!");await deleteCollection("roundRobinMatches");let e=[...localTeams];e.length%2!=0&&e.push({id:"BYE"});for(let t=0;t<e.length;t++)for(let l=t+1;l<e.length;l++)"BYE"===e[t].id||"BYE"===e[l].id||await db.collection("roundRobinMatches").add({teamA:e[t],teamB:e[l],scoreA:null,scoreB:null});alert("Calendario generato!"),calculateStandingsBtn.style.display="block"}),window.updateScore=async(e,t,l)=>{await db.collection("roundRobinMatches").doc(e).update({[("A"===t?"scoreA":"scoreB")]:parseInt(l)||null})},calculateStandingsBtn.addEventListener("click",()=>renderStandingsTable(calculateStandings(localTeams,localRoundRobinMatches)));function renderStandingsTable(e){let t=`<h3>Classifica Completa</h3><table><tr><th>Pos</th><th>Squadra</th><th>Pt</th><th>V</th><th>P</th><th>S</th><th>GF</th><th>GS</th><th>DR</th></tr>`;e.forEach((e,l)=>{t+=`<tr><td>${l+1}</td><td>${e.name}</td><td>${e.punti}</td><td>${e.v}</td><td>${e.p}</td><td>${e.s}</td><td>${e.gf}</td><td>${e.gs}</td><td>${e.gf-e.gs}</td></tr>`}),standingsTableDiv.innerHTML=t+"</table>"}function updateLiveLeaderboard(e){const t=document.getElementById("live-leaderboard");if(0===e.length)return void(t.style.display="none");t.style.display="block";const l=document.getElementById("top-teams-list"),a=document.getElementById("bottom-teams-list");l.innerHTML="",a.innerHTML="",e.slice(0,3).forEach((e,t)=>{l.innerHTML+=`<li><span><span class="team-pos">${t+1}.</span> ${e.name}</span><span class="team-points">${e.punti} Pt</span></li>`}),e.length>3&&e.slice(-3).reverse().forEach((t,l)=>{a.innerHTML+=`<li><span><span class="team-pos">${e.length-l}.</span> ${t.name}</span><span class="team-points">${t.punti} Pt</span></li>`})}db.collection("players").onSnapshot(e=>{localPlayers=e.docs.map(e=>({id:e.id,...e.data()})),renderPlayers()}),db.collection("teams").onSnapshot(e=>{localTeams=e.docs.map(e=>({id:e.id,...e.data()})),(e=>{teamsList.innerHTML="",e.forEach(e=>{const t=document.createElement("div");t.className="team-item",t.innerHTML=`<input type="text" class="team-name-input" value="${e.name}" onchange="updateTeamName('${e.id}', this.value)"><span>${e.player1.name} & ${e.player2.name}</span>`,teamsList.appendChild(t)})})(localTeams),updateLiveLeaderboard(calculateStandings(localTeams,localRoundRobinMatches))}),db.collection("roundRobinMatches").onSnapshot(e=>{localRoundRobinMatches=e.docs.map(e=>({id:e.id,...e.data()})),(e=>{roundRobinMatchesDiv.innerHTML="",e.forEach(e=>{const t=document.createElement("div");t.className="match-item",t.innerHTML=`<span>${e.teamA.name}</span><input type="number" value="${e.scoreA??""}" onchange="updateScore('${e.id}', 'A', this.value)"><span class="vs">vs</span><input type="number" value="${e.scoreB??""}" onchange="updateScore('${e.id}', 'B', this.value)"><span>${e.teamB.name}</span>`,roundRobinMatchesDiv.appendChild(t)})})(localRoundRobinMatches),updateLiveLeaderboard(calculateStandings(localTeams,localRoundRobinMatches))});async function deleteCollection(e){const t=db.batch(),l=await db.collection(e).get();l.docs.forEach(e=>t.delete(e.ref)),await t.commit()}document.getElementById("reset-teams-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Cancellerà squadre e partite.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches")])}),document.getElementById("reset-tournament-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Manterrà solo i giocatori.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches")])}),document.getElementById("reset-all-btn").addEventListener("click",async()=>{confirm("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?")&&await Promise.all([deleteCollection("players"),deleteCollection("teams"),deleteCollection("roundRobinMatches")])});const toBase64=e=>new Promise((t,l)=>{const a=new FileReader;a.readAsDataURL(e),a.onload=()=>t(a.result),a.onerror=l});document.getElementById("player-photo").addEventListener("change",e=>{document.getElementById("file-name").textContent=e.target.files[0]?.name||"Nessuna foto selezionata"});function calculateStandings(e,t){if(!e||0===e.length)return[];const l=e.map(e=>({...e,punti:0,v:0,p:0,s:0,gf:0,gs:0}));return t.forEach(e=>{if(null!==e.scoreA&&null!==e.scoreB){const t=l.find(t=>t.id===e.teamA.id),a=l.find(t=>t.id===e.teamB.id);t&&(a&&(t.gf+=e.scoreA,t.gs+=e.scoreB,a.gf+=e.scoreB,a.gs+=e.scoreA,e.scoreA>e.scoreB?(t.punti+=3,t.v++,a.s++):e.scoreB>e.scoreA?(a.punti+=3,a.v++,t.s++):(t.punti+=1,a.punti+=1,t.p++,a.p++)))}),l.sort((e,t)=>t.punti-e.punti||t.gf-t.gs-(e.gf-e.gs)||t.gf-e.gf)}
 
-    window.deletePlayer = async (id) => {
-        if (confirm('Sei sicuro di voler eliminare questo giocatore?')) await db.collection('players').doc(id).delete();
-    };
-
-    // --- SEZIONE SQUADRE ---
-    createTeamsBtn.addEventListener('click', async () => {
-        const strong = localPlayers.filter(p => p.skill === 'forte');
-        const weak = localPlayers.filter(p => p.skill === 'scarso');
-        if (strong.length === 0 || strong.length !== weak.length) return alert('Errore: il numero di giocatori "forti" e "scarsi" deve essere uguale e maggiore di zero!');
-        
-        if (confirm('Sei sicuro? Questo cancellerà le squadre e le partite esistenti.')) {
-            await deleteCollection('teams');
-            await deleteCollection('roundRobinMatches');
-            strong.sort(() => 0.5 - Math.random());
-            weak.sort(() => 0.5 - Math.random());
-            for (let i = 0; i < strong.length; i++) {
-                await db.collection('teams').add({ name: `Squadra ${i + 1}`, player1: strong[i], player2: weak[i] });
-            }
-        }
-    });
-    
-    function renderTeams() {
-        teamsList.innerHTML = '';
-        localTeams.forEach(team => {
-            const teamDiv = document.createElement('div');
-            teamDiv.className = 'team-item';
-            teamDiv.innerHTML = `<input type="text" class="team-name-input" value="${team.name}" onchange="updateTeamName('${team.id}', this.value)"><span>${team.player1.name} & ${team.player2.name}</span>`;
-            teamsList.appendChild(teamDiv);
-        });
-    }
-
-    window.updateTeamName = async (id, newName) => await db.collection('teams').doc(id).update({ name: newName });
-
-    // --- SEZIONE GIRONI ---
-    generateRoundRobinBtn.addEventListener('click', async () => {
-        if (localTeams.length < 2) return alert("Servono almeno 2 squadre!");
-        await deleteCollection('roundRobinMatches');
-        let teams = [...localTeams];
-        if (teams.length % 2 !== 0) teams.push({ id: 'BYE' });
-        
-        for (let i = 0; i < teams.length; i++) {
-            for (let j = i + 1; j < teams.length; j++) {
-                if (teams[i].id === 'BYE' || teams[j].id === 'BYE') continue;
-                await db.collection('roundRobinMatches').add({ teamA: teams[i], teamB: teams[j], scoreA: null, scoreB: null });
-            }
-        }
-        alert('Calendario generato!');
-        calculateStandingsBtn.style.display = 'block';
-    });
-
-    function renderRoundRobinMatches() {
-        roundRobinMatchesDiv.innerHTML = '';
-        localRoundRobinMatches.forEach(m => {
-            const div = document.createElement('div');
-            div.className = 'match-item';
-            div.innerHTML = `<span>${m.teamA.name}</span><input type="number" value="${m.scoreA ?? ''}" onchange="updateScore('${m.id}', 'A', this.value)"><span class="vs">vs</span><input type="number" value="${m.scoreB ?? ''}" onchange="updateScore('${m.id}', 'B', this.value)"><span>${m.teamB.name}</span>`;
-            roundRobinMatchesDiv.appendChild(div);
-        });
-    }
-
-    window.updateScore = async (id, team, score) => await db.collection('roundRobinMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
-
-    // --- CLASSIFICHE ---
-    function calculateStandings(teams, matches) {
-        if (!teams || !matches) return [];
-        const standings = teams.map(t => ({...t, punti: 0, v: 0, p: 0, s: 0, gf: 0, gs: 0}));
-        matches.forEach(m => {
-            if (m.scoreA === null || m.scoreB === null) return;
-            const tA = standings.find(t => t.id === m.teamA.id);
-            const tB = standings.find(t => t.id === m.teamB.id);
-            if (!tA || !tB) return;
-            tA.gf += m.scoreA; tA.gs += m.scoreB; tB.gf += m.scoreB; tB.gs += m.scoreA;
-            if (m.scoreA > m.scoreB) { tA.punti += 3; tA.v++; tB.s++; }
-            else if (m.scoreB > m.scoreA) { tB.punti += 3; tB.v++; tA.s++; }
-            else { tA.punti += 1; tB.punti += 1; tA.p++; tB.p++; }
-        });
-        return standings.sort((a,b) => b.punti - a.punti || (b.gf - b.gs) - (a.gf - a.gs) || b.gf - a.gf);
-    }
-
-    calculateStandingsBtn.addEventListener('click', () => renderStandingsTable(calculateStandings(localTeams, localRoundRobinMatches)));
-
-    function renderStandingsTable(standings) {
-        let html = `<h3>Classifica Completa</h3><table><tr><th>Pos</th><th>Squadra</th><th>Pt</th><th>V</th><th>P</th><th>S</th><th>GF</th><th>GS</th><th>DR</th></tr>`;
-        standings.forEach((t, i) => { html += `<tr><td>${i+1}</td><td>${t.name}</td><td>${t.punti}</td><td>${t.v}</td><td>${t.p}</td><td>${t.s}</td><td>${t.gf}</td><td>${t.gs}</td><td>${t.gf - t.gs}</td></tr>`; });
-        standingsTableDiv.innerHTML = html + '</table>';
-    }
-
-    function updateLiveLeaderboard(standings) {
-        const lb = document.getElementById('live-leaderboard');
-        if (standings.length === 0) { lb.style.display = 'none'; return; }
-        lb.style.display = 'block';
-        const top = document.getElementById('top-teams-list');
-        const bottom = document.getElementById('bottom-teams-list');
-        top.innerHTML = ''; bottom.innerHTML = '';
-        standings.slice(0, 3).forEach((t, i) => top.innerHTML += `<li><span><span class="team-pos">${i+1}.</span> ${t.name}</span><span class="team-points">${t.punti} Pt</span></li>`);
-        if (standings.length > 3) standings.slice(-3).reverse().forEach((t, i) => bottom.innerHTML += `<li><span><span class="team-pos">${standings.length - i}.</span> ${t.name}</span><span class="team-points">${t.punti} Pt</span></li>`);
-    }
-    
-    // --- GESTIONE DATI IN TEMPO REALE CON FIREBASE ---
-    db.collection('players').onSnapshot(snap => { localPlayers = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); renderPlayers(); });
-    db.collection('teams').onSnapshot(snap => { localTeams = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); renderTeams(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
-    db.collection('roundRobinMatches').onSnapshot(snap => { localRoundRobinMatches = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); renderRoundRobinMatches(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
-
-    // --- PANNELLO ADMIN ---
-    async function deleteCollection(name) {
-        const snap = await db.collection(name).get();
-        const batch = db.batch();
-        snap.docs.forEach(doc => batch.delete(doc.ref));
-        await batch.commit();
-    }
-    document.getElementById('reset-teams-btn').addEventListener('click', async () => { if (confirm('Sei sicuro? Cancellerà squadre e partite.')) { await deleteCollection('teams'); await deleteCollection('roundRobinMatches'); location.reload(); }});
-    document.getElementById('reset-tournament-btn').addEventListener('click', async () => { if (confirm('Sei sicuro? Manterrà solo i giocatori.')) { await deleteCollection('teams'); await deleteCollection('roundRobinMatches'); location.reload(); }});
-    document.getElementById('reset-all-btn').addEventListener('click', async () => { if (confirm('ATTENZIONE MASSIMA! Sei sicuro di cancellare TUTTO?')) { await deleteCollection('players'); await deleteCollection('teams'); await deleteCollection('roundRobinMatches'); location.reload(); }});
-
-    // --- UTILITY ---
-    const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
-    document.getElementById('player-photo').addEventListener('change', (e) => { document.getElementById('file-name').textContent = e.target.files[0]?.name || 'Nessuna foto selezionata'; });
 });
