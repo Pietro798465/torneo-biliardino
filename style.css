@@ -187,7 +187,7 @@ button:hover { background-color: #166fe5; }
 .team-item { display: flex; align-items: stretch; gap: 10px; margin-bottom: 8px; }
 .team-item .team-name-input { flex: 0 0 25%; font-size: 1.1em; font-weight: bold; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
 .team-player-box { flex: 1; display: flex; align-items: center; gap: 8px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; }
-.player-photo-icon { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; background-color: #fff; flex-shrink: 0; }
+.player-photo-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; background-color: #fff; flex-shrink: 0; }
 .team-player-box .player-photo-icon:first-child { margin-right: -15px; }
 
 /* =================================
@@ -213,3 +213,4 @@ button:hover { background-color: #166fe5; }
 .knockout-options button { flex: 1; }
 .btn-secondary { background-color: #6c757d; border-color: #6c757d; }
 .btn-secondary:hover { background-color: #5a6268; }
+
