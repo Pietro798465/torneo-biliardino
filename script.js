@@ -132,20 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.updateKnockoutScore = async (id, team, score) => await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
 
     // --- FUNZIONI DI RENDER ---
-    function renderPlayers() {
-        playersList.innerHTML = "";
-        localPlayers.forEach(p => {
-            const div = document.createElement("div");
-            div.className = "player-item";
-            const skillText = p.skill === "top_player" ? "Top Player" : "Player";
-            div.innerHTML = `<img src="${p.photo || 'https://via.placeholder.com/40x40'}" alt="${p.name}"><span>${p.name} (${skillText})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
-            playersList.appendChild(div);
-        });
-    }
-
-    function renderTeams() {
-        teamsList.innerHTML = "";
-        localTeams.forEach(t => {
+    function renderPlayers(){playersList.innerHTML="";localPlayers.forEach(p=>{const d=document.createElement("div");d.className="player-item";const s=p.skill==="top_player"?"Top Player":"Player";d.innerHTML=`<img src="${p.photo||"https://via.placeholder.com/40x40"}" alt="${p.name}"><span>${p.name} (${s})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`,playersList.appendChild(d)})}
+    
+    function renderTeams(){
+        teamsList.innerHTML="";
+        localTeams.forEach(t=>{
             const div = document.createElement("div");
             div.className = "team-item";
             div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><div class="team-player-box">${photoHTML(t.player1)} ${t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2.name}</div>`;
@@ -161,13 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const scoreA = m.scoreA ?? '', scoreB = m.scoreB ?? '';
             let classA = '', classB = '';
             if (scoreA !== '' && scoreB !== '') { if (+scoreA > +scoreB) { classA = 'winner'; classB = 'loser'; } else if (+scoreB > +scoreA) { classB = 'winner'; classA = 'loser'; } }
-            div.innerHTML = `<div class="team-info team-a">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><div class="score-inputs"><input type="number" class="score-input ${classA}" value="${scoreA}" onchange="updateScore('${m.id}','A',this.value)"><span class="vs">vs</span><input type="number" class="score-input ${classB}" value="${scoreB}" onchange="updateScore('${m.id}','B',this.value)"></div><div class="team-info team-b"><span>${m.teamB.name}</span>${photoHTML(m.teamB.player2)}${photoHTML(m.teamB.player1)}</div>`;
+            div.innerHTML = `<div class="match-row"><div class="team-details">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><input type="number" class="score-input ${classA}" value="${scoreA}" onchange="updateScore('${m.id}','A',this.value)"></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB.player1)}${photoHTML(m.teamB.player2)}<span>${m.teamB.name}</span></div><input type="number" class="score-input ${classB}" value="${scoreB}" onchange="updateScore('${m.id}','B',this.value)"></div>`;
             roundRobinMatchesDiv.appendChild(div);
         });
     }
-
-    function renderKnockoutBracket() {
-        knockoutStageDiv.innerHTML = "";
+    
+    function renderKnockoutBracket(){
+        knockoutStageDiv.innerHTML="";
         if (localKnockoutMatches.length === 0) return;
         const semifinals = localKnockoutMatches.filter(m => m.round === 1).sort((a, b) => a.matchIndex - b.matchIndex);
         const sf1 = semifinals[0], sf2 = semifinals[1];
@@ -189,74 +180,27 @@ document.addEventListener('DOMContentLoaded', () => {
         knockoutStageDiv.innerHTML = semifinalHTML + finalHTML;
     }
 
-    function createMatchupHTML(m) {
+    function createMatchupHTML(m){
         const id = m.id || "", sA = m.scoreA ?? "", sB = m.scoreB ?? "";
         const wA = m.scoreA !== null && sA > sB, wB = m.scoreB !== null && sB > sA;
         return `<div class="knockout-matchup"><div class="knockout-team team-a ${wA ? "winner" : ""}"><span class="team-name-knockout">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}${m.teamA.name}</span></div><input type="number" class="score-knockout" value="${sA}" ${id ? `onchange="updateKnockoutScore('${id}','A',this.value)"` : "disabled"}><span class="knockout-vs">vs</span><input type="number" class="score-knockout" value="${sB}" ${id ? `onchange="updateKnockoutScore('${id}','B',this.value)"` : "disabled"}><div class="knockout-team team-b ${wB ? "winner" : ""}"><span class="team-name-knockout">${m.teamB.name}${photoHTML(m.teamB.player2)}${photoHTML(m.teamB.player1)}</span></div></div>`;
     }
-
+    
     // --- GESTIONE CLASSIFICHE ---
-    function calculateStandings(teams, matches) {
-        if (!teams || teams.length === 0) return [];
-        const standings = teams.map(t => ({ ...t, punti: 0, v: 0, p: 0, s: 0, gf: 0, gs: 0, tieBreakerWin: false }));
-        matches.forEach(m => {
-            if (m.scoreA === null || m.scoreB === null) return;
-            const tA = standings.find(t => t.id === m.teamA.id), tB = standings.find(t => t.id === m.teamB.id);
-            if (!tA || !tB) return;
-            tA.gf += m.scoreA; tA.gs += m.scoreB;
-            tB.gf += m.scoreB; tB.gs += m.scoreA;
-            if (m.scoreA > m.scoreB) { tA.punti += 3; tA.v++; tB.s++; }
-            else if (m.scoreB > m.scoreA) { tB.punti += 3; tB.v++; tA.s++; }
-            else { tA.punti += 1; tB.punti += 1; tA.p++; tB.p++; }
-        });
-        return standings.sort((a, b) => {
-            if (a.punti !== b.punti) return b.punti - a.punti;
-            const h2h = matches.find(m => (m.teamA.id === a.id && m.teamB.id === b.id) || (m.teamA.id === b.id && m.teamB.id === a.id));
-            if (h2h && h2h.scoreA !== h2h.scoreB) {
-                if ((h2h.teamA.id === a.id && h2h.scoreA > h2h.scoreB) || (h2h.teamB.id === a.id && h2h.scoreB > h2h.scoreA)) { a.tieBreakerWin = true; return -1; }
-                b.tieBreakerWin = true; return 1;
-            }
-            const gda = a.gf - a.gs, gdb = b.gf - b.gs;
-            return gda !== gdb ? gdb - gda : b.gf - a.gf;
-        });
-    }
-    calculateStandingsBtn.addEventListener("click", () => renderStandingsTable(calculateStandings(localTeams, localRoundRobinMatches)));
-    function renderStandingsTable(standings) {
-        let html = `<h3>Classifica Completa</h3><table><thead><tr><th>Pos</th><th>Squadra</th><th>Pt</th><th>V</th><th>P</th><th>S</th><th>GF</th><th>GS</th><th>DR</th></tr></thead><tbody>`;
-        standings.forEach((s, i) => {
-            html += `<tr><td>${i + 1}</td><td>${s.name} ${s.tieBreakerWin ? "*" : ""}</td><td>${s.punti}</td><td>${s.v}</td><td>${s.p}</td><td>${s.s}</td><td>${s.gf}</td><td>${s.gs}</td><td>${s.gf - s.gs}</td></tr>`;
-        });
-        standingsTableDiv.innerHTML = html + "</tbody></table>";
-    }
-    function updateLiveLeaderboard(standings) {
-        const lb = document.getElementById("live-leaderboard"), topList = document.getElementById("top-teams-list"), bottomList = document.getElementById("bottom-teams-list");
-        if (standings.length === 0) return lb.style.display = "none";
-        lb.style.display = "block";
-        topList.innerHTML = "";
-        bottomList.innerHTML = "";
-        const qz = 4;
-        standings.slice(0, qz).forEach((s, i) => {
-            topList.innerHTML += `<li><span><span class="team-pos">${i + 1}.</span> ${s.name} ${s.tieBreakerWin ? '<span class="tie-breaker-star">*</span>' : ""}</span><span class="team-points">${s.punti} Pt</span></li>`;
-        });
-        standings.slice(qz).forEach((s, i) => {
-            bottomList.innerHTML += `<li><span><span class="team-pos">${qz + i + 1}.</span> ${s.name}</span><span class="team-points">${s.punti} Pt</span></li>`;
-        });
-    }
+    function calculateStandings(teams, matches){if(!teams||teams.length===0)return[];const standings=teams.map(t=>({...t,punti:0,v:0,p:0,s:0,gf:0,gs:0,tieBreakerWin:!1}));return matches.forEach(m=>{if(m.scoreA===null||m.scoreB===null)return;const tA=standings.find(t=>t.id===m.teamA.id),tB=standings.find(t=>t.id===m.teamB.id);if(!tA||!tB)return;tA.gf+=m.scoreA,tA.gs+=m.scoreB,tB.gf+=m.scoreB,tB.gs+=m.scoreA;if(m.scoreA>m.scoreB){tA.punti+=3,tA.v++,tB.s++}else if(m.scoreB>m.scoreA){tB.punti+=3,tB.v++,tA.s++}else{tA.punti+=1,tB.punti+=1,tA.p++,tB.p++}}),standings.sort((a,b)=>{if(a.punti!==b.punti)return b.punti-a.punti;const h2h=matches.find(m=>(m.teamA.id===a.id&&m.teamB.id===b.id)||(m.teamA.id===b.id&&m.teamB.id===a.id));if(h2h&&h2h.scoreA!==h2h.scoreB){if((h2h.teamA.id===a.id&&h2h.scoreA>h2h.scoreB)||(h2h.teamB.id===a.id&&h2h.scoreB>h2h.scoreA))return a.tieBreakerWin=!0,-1;return b.tieBreakerWin=!0,1}const gda=a.gf-a.gs,gdb=b.gf-b.gs;return gda!==gdb?gdb-gda:b.gf-a.gf})}
+    calculateStandingsBtn.addEventListener("click",()=>renderStandingsTable(calculateStandings(localTeams,localRoundRobinMatches)));
+    function renderStandingsTable(standings){let html=`<h3>Classifica Completa</h3><table><thead><tr><th>Pos</th><th>Squadra</th><th>Pt</th><th>V</th><th>P</th><th>S</th><th>GF</th><th>GS</th><th>DR</th></tr></thead><tbody>`;standings.forEach((s,i)=>{html+=`<tr><td>${i+1}</td><td>${s.name} ${s.tieBreakerWin?"*":""}</td><td>${s.punti}</td><td>${s.v}</td><td>${s.p}</td><td>${s.s}</td><td>${s.gf}</td><td>${s.gs}</td><td>${s.gf-s.gs}</td></tr>`}),standingsTableDiv.innerHTML=html+"</tbody></table>"}
+    function updateLiveLeaderboard(standings){const lb=document.getElementById("live-leaderboard"),topList=document.getElementById("top-teams-list"),bottomList=document.getElementById("bottom-teams-list");if(standings.length===0)return lb.style.display="none";lb.style.display="block",topList.innerHTML="",bottomList.innerHTML="";const qz=4;standings.slice(0,qz).forEach((s,i)=>{topList.innerHTML+=`<li><span><span class="team-pos">${i+1}.</span> ${s.name} ${s.tieBreakerWin?'<span class="tie-breaker-star">*</span>':""}</span><span class="team-points">${s.punti} Pt</span></li>`}),standings.slice(qz).forEach((s,i)=>{bottomList.innerHTML+=`<li><span><span class="team-pos">${qz+i+1}.</span> ${s.name}</span><span class="team-points">${s.punti} Pt</span></li>`})}
     
     // --- GESTIONE DATI IN TEMPO REALE ---
-    db.collection("players").onSnapshot(s => { localPlayers = s.docs.map(d => ({ id: d.id, ...d.data() })); renderPlayers(); });
-    db.collection("teams").onSnapshot(s => { localTeams = s.docs.map(d => ({ id: d.id, ...d.data() })); renderTeams(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
-    db.collection("roundRobinMatches").onSnapshot(s => { localRoundRobinMatches = s.docs.map(d => ({ id: d.id, ...d.data() })); renderRoundRobinMatches(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
-    db.collection("knockoutMatches").onSnapshot(s => { localKnockoutMatches = s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.round - b.round || a.matchIndex - b.matchIndex); renderKnockoutBracket(); });
+    db.collection("players").onSnapshot(s=>{localPlayers=s.docs.map(d=>({id:d.id,...d.data()})),renderPlayers()});
+    db.collection("teams").onSnapshot(s=>{localTeams=s.docs.map(d=>({id:d.id,...d.data()}));renderTeams();updateLiveLeaderboard(calculateStandings(localTeams,localRoundRobinMatches))});
+    db.collection("roundRobinMatches").onSnapshot(s=>{localRoundRobinMatches=s.docs.map(d=>({id:d.id,...d.data()}));renderRoundRobinMatches();updateLiveLeaderboard(calculateStandings(localTeams,localRoundRobinMatches))});
+    db.collection("knockoutMatches").onSnapshot(s=>{localKnockoutMatches=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.round-b.round||a.matchIndex-b.matchIndex);renderKnockoutBracket()});
 
     // --- PANNELLO ADMIN ---
-    async function deleteCollection(name) {
-        const batch = db.batch();
-        const snapshot = await db.collection(name).get();
-        snapshot.docs.forEach(doc => batch.delete(doc.ref));
-        try { await batch.commit(); } catch (e) { console.error("Errore eliminazione:", e); }
-    }
-    document.getElementById("reset-teams-btn").addEventListener("click", async () => { if (confirm("Sei sicuro? Cancellerà squadre e partite.")) await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]) });
-    document.getElementById("reset-tournament-btn").addEventListener("click", async () => { if (confirm("Sei sicuro? Manterrà solo i giocatori.")) await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]) });
-    document.getElementById("reset-all-btn").addEventListener("click", async () => { if (confirm("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?")) await Promise.all([deleteCollection("players"), deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]) });
+    async function deleteCollection(name){const batch=db.batch(),snapshot=await db.collection(name).get();snapshot.docs.forEach(doc=>batch.delete(doc.ref));try{await batch.commit()}catch(e){console.error("Errore eliminazione:",e)}}
+    document.getElementById("reset-teams-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Cancellerà squadre e partite.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
+    document.getElementById("reset-tournament-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Manterrà solo i giocatori.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
+    document.getElementById("reset-all-btn").addEventListener("click",async()=>{confirm("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?")&&await Promise.all([deleteCollection("players"),deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
 });
