@@ -1,99 +1,308 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Torneo di Biliardino</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Firebase Libraries -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
-</head>
-<body>
+/* =================================
+   STILI GENERALI E LAYOUT
+   ================================= */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
 
-<!-- NUOVA Schermata Iniziale: visibile al caricamento -->
-<div id="start-screen">
-    <h2>CLICCA PER INIZIARE</h2>
-</div>
+h1, h2, h3 {
+    color: #1a2a4c;
+    text-align: center;
+}
 
-<!-- Classifica Live Fissa -->
-<div id="live-leaderboard" style="display: none;">
-    <h4>🏆 CLASSIFICA LIVE</h4>
-    <div class="leaderboard-section top-teams"><ul id="top-teams-list"></ul></div>
-    <div class="leaderboard-section bottom-teams"><ul id="bottom-teams-list"></ul></div>
-</div>
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 800px;
+}
 
-<!-- Splash Screen con il Logo: ora è nascosta all'inizio -->
-<div id="splash-screen">
-    <img src="logo.png" alt="Logo del Torneo" class="splash-logo">
-    <audio id="logo-sound" src="logo-sound.mp3"></audio>
-</div>
+/* =================================
+   SCHERMATA "CLICCA PER INIZIARE" (VISIBILE ALL'INIZIO)
+   ================================= */
+#start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001; /* Z-index più alto per essere sopra a tutto */
+    cursor: pointer;
+    font-family: 'Arial Black', Gadget, sans-serif;
+    font-size: 2em;
+    text-align: center;
+}
 
-<!-- Player per la musica di sottofondo (nascosto) -->
-<audio id="background-music" loop><source src="song2.mp3" type="audio/mpeg"></audio>
+/* =================================
+   SPLASH SCREEN (CON LOGO) - NASCOSTA ALL'INIZIO
+   ================================= */
+#splash-screen {
+    display: none; /* Nascosta di default, attivata da JavaScript */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Z-index alto ma inferiore a #start-screen */
+    animation: splashAnimation 5s forwards;
+}
 
-<h1>Gestione Torneo di Biliardino</h1>
+.splash-logo {
+    max-width: 80%;
+    max-height: 80%;
+    width: 500px;
+}
 
-<!-- Sezione 1: Registrazione Giocatori -->
-<div class="card">
-    <h2>1. Registra Giocatori</h2>
-    <form id="player-form">
-        <input type="text" id="player-name" placeholder="Nome Giocatore" required>
-        <select id="player-skill" required>
-            <option value="" disabled selected>Seleziona abilità</option>
-            <option value="forte">Forte</option>
-            <option value="scarso">Scarso</option>
-        </select>
-        <div class="file-input-wrapper">
-            <button type="button" class="btn-file">Scegli Foto</button>
-            <input type="file" id="player-photo" accept="image/*">
-            <span id="file-name">Nessuna foto selezionata</span>
-        </div>
-        <button type="submit">Aggiungi Giocatore</button>
-    </form>
-    <div id="players-list-container">
-        <h3>Giocatori Registrati</h3>
-        <div id="players-list"></div>
-    </div>
-</div>
+@keyframes splashAnimation {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+}
 
-<!-- Sezione 2: Creazione Squadre -->
-<div class="card">
-    <h2>2. Crea le Squadre</h2>
-    <button id="create-teams-btn">Crea Squadre (Forte + Scarso)</button>
-    <div id="teams-list"></div>
-</div>
+/* =================================
+   CLASSIFICA LIVE FISSA
+   ================================= */
+#live-leaderboard {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 250px;
+    background-color: rgba(20, 20, 40, 0.9);
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
 
-<!-- Sezione 3: Fase a Gironi -->
-<div class="card">
-    <h2>3. Fase a Gironi (Tutti contro Tutti)</h2>
-    <button id="generate-round-robin-btn">Genera Partite Gironi</button>
-    <div id="round-robin-matches"></div>
-    <button id="calculate-standings-btn" style="display:none;">Mostra Classifica Completa</button>
-    <div id="standings-table"></div>
-</div>
+#live-leaderboard h4 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #ffc107;
+}
 
-<!-- Sezione 4: Fase Finale -->
-<div class="card">
-    <h2>4. Fase Finale</h2>
-    <label for="num-qualifiers">Numero squadre qualificate (es. 4 o 8):</label>
-    <input type="number" id="num-qualifiers" value="4" min="2" step="2">
-    <button id="generate-knockout-btn">Genera Tabellone Eliminazione</button>
-    <div id="knockout-stage"></div>
-</div>
+.leaderboard-section {
+    margin-bottom: 10px;
+}
 
-<!-- Pannello di Controllo Amministratore -->
-<div class="card" id="admin-panel">
-    <h2>Pannello di Controllo (Admin)</h2>
-    <p class="warning"><strong>Attenzione:</strong> Usa questi pulsanti con cautela.</p>
-    <div class="admin-buttons">
-        <button id="reset-teams-btn" class="btn-danger">Ripeti Sorteggio Squadre</button>
-        <button id="reset-tournament-btn" class="btn-danger">Azzera Torneo (Mantieni Giocatori)</button>
-        <button id="reset-all-btn" class="btn-danger-outline">RESET COMPLETO (CANCELLA TUTTO)</button>
-    </div>
-</div>
+.leaderboard-section h5 {
+    margin: 0 0 5px 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 3px;
+}
 
-<script src="script.js"></script>
+.leaderboard-section.top-teams h5 { color: #4CAF50; }
+.leaderboard-section.bottom-teams h5 { color: #F44336; }
 
-</body>
-</html>
+#live-leaderboard ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#live-leaderboard li {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 14px;
+}
+
+#live-leaderboard li .team-pos { font-weight: bold; margin-right: 8px; }
+#live-leaderboard li .team-points { font-weight: bold; }
+
+/* =================================
+   ELEMENTI DELLE CARD (FORM, LISTE, PARTITE)
+   ================================= */
+input[type="text"], input[type="number"], select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+button:hover { background-color: #166fe5; }
+
+#player-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.file-input-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.btn-file {
+    background-color: #e9ebee;
+    color: #4b4f56;
+    padding: 8px 15px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    width: auto;
+    display: inline-block;
+}
+
+#file-name {
+    margin-left: 10px;
+    font-style: italic;
+    color: #666;
+}
+
+#players-list-container, #teams-list, #round-robin-matches, #knockout-stage {
+    margin-top: 20px;
+}
+
+.player-item, .team-item, .match-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.player-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.match-item input[type="number"] {
+    width: 50px;
+    text-align: center;
+}
+
+.team-name-input {
+    font-size: 1.1em;
+    font-weight: bold;
+    border: none;
+    background: transparent;
+    text-align: center;
+    width: 60%;
+}
+
+.vs {
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+/* =================================
+   TABELLA CLASSIFICA
+   ================================= */
+#standings-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+#standings-table th, #standings-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+#standings-table th {
+    background-color: #f2f2f2;
+}
+
+/* =================================
+   PANNELLO DI CONTROLLO (ADMIN)
+   ================================= */
+#admin-panel {
+    border-top: 4px solid #F44336;
+}
+
+#admin-panel h2 {
+    color: #F44336;
+}
+
+.warning {
+    background-color: #fffbe6;
+    border: 1px solid #ffe58f;
+    padding: 10px;
+    border-radius: 4px;
+    color: #8a6d3b;
+    text-align: center;
+}
+
+.admin-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+}
+
+.btn-danger:hover {
+    background-color: #c9302c;
+}
+
+.btn-danger-outline {
+    background-color: white;
+    color: #d9534f;
+    border: 2px solid #d9534f;
+}
+
+.btn-danger-outline:hover {
+    background-color: #f2dede;
+}
