@@ -306,3 +306,9 @@ button:hover { background-color: #166fe5; }
 .btn-danger-outline:hover {
     background-color: #f2dede;
 }
+/* Stile per l'asterisco dello scontro diretto */
+.tie-breaker-star {
+    color: #ffc107; /* Giallo oro, come il titolo della classifica */
+    font-weight: bold;
+    margin-left: 4px;
+}
