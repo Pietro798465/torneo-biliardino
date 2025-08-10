@@ -46,15 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     splashScreen.addEventListener('animationend', () => {
         splashScreen.style.display = 'none';
     });
-    
-    // GESTIONE CLASSIFICA A SCOMPARSA
-    const leaderboard = document.getElementById('live-leaderboard');
-    const leaderboardToggle = document.getElementById('leaderboard-toggle');
-    if(leaderboardToggle) {
-        leaderboardToggle.addEventListener('click', () => {
-            leaderboard.classList.toggle('visible');
-        });
-    }
 
 
     // --- RIFERIMENTI HTML E VARIABILI GLOBALI ---
@@ -140,21 +131,21 @@ document.addEventListener('DOMContentLoaded', () => {
     generateRandomKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(true));
     window.updateKnockoutScore = async (id, team, score) => await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
 
-    // --- FUNZIONI DI RENDER (Stabili e Leggibili) ---
-    function renderPlayers(){
-        playersList.innerHTML="";
-        localPlayers.forEach(p=>{
-            const div=document.createElement("div");
-            div.className="player-item";
-            const skillText=p.skill==="top_player"?"Top Player":"Player";
-            div.innerHTML=`<img src="${p.photo||"https://via.placeholder.com/40x40"}" alt="${p.name}"><span>${p.name} (${skillText})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
+    // --- FUNZIONI DI RENDER ---
+    function renderPlayers() {
+        playersList.innerHTML = "";
+        localPlayers.forEach(p => {
+            const div = document.createElement("div");
+            div.className = "player-item";
+            const skillText = p.skill === "top_player" ? "Top Player" : "Player";
+            div.innerHTML = `<img src="${p.photo || 'https://via.placeholder.com/40x40'}" alt="${p.name}"><span>${p.name} (${skillText})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
             playersList.appendChild(div);
         });
     }
-    
-    function renderTeams(){
-        teamsList.innerHTML="";
-        localTeams.forEach(t=>{
+
+    function renderTeams() {
+        teamsList.innerHTML = "";
+        localTeams.forEach(t => {
             const div = document.createElement("div");
             div.className = "team-item";
             div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><div class="team-player-box">${photoHTML(t.player1)} ${t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2.name}</div>`;
@@ -170,11 +161,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const scoreA = m.scoreA ?? '', scoreB = m.scoreB ?? '';
             let classA = '', classB = '';
             if (scoreA !== '' && scoreB !== '') { if (+scoreA > +scoreB) { classA = 'winner'; classB = 'loser'; } else if (+scoreB > +scoreA) { classB = 'winner'; classA = 'loser'; } }
-            div.innerHTML = `<div class="match-row"><div class="team-details">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><input type="number" class="score-input ${classA}" value="${scoreA}" onchange="updateScore('${m.id}','A',this.value)"></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB.player1)}${photoHTML(m.teamB.player2)}<span>${m.teamB.name}</span></div><input type="number" class="score-input ${classB}" value="${scoreB}" onchange="updateScore('${m.id}','B',this.value)"></div>`;
+            div.innerHTML = `<div class="team-info team-a">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><div class="score-inputs"><input type="number" class="score-input ${classA}" value="${scoreA}" onchange="updateScore('${m.id}','A',this.value)"><span class="vs">vs</span><input type="number" class="score-input ${classB}" value="${scoreB}" onchange="updateScore('${m.id}','B',this.value)"></div><div class="team-info team-b"><span>${m.teamB.name}</span>${photoHTML(m.teamB.player2)}${photoHTML(m.teamB.player1)}</div>`;
             roundRobinMatchesDiv.appendChild(div);
         });
     }
-    
+
     function renderKnockoutBracket() {
         knockoutStageDiv.innerHTML = "";
         if (localKnockoutMatches.length === 0) return;
@@ -197,16 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
         finalHTML += '</div>';
         knockoutStageDiv.innerHTML = semifinalHTML + finalHTML;
     }
-    
+
     function createMatchupHTML(m) {
         const id = m.id || "", sA = m.scoreA ?? "", sB = m.scoreB ?? "";
         const wA = m.scoreA !== null && sA > sB, wB = m.scoreB !== null && sB > sA;
-        
-        // Versione Mobile
-        if (window.innerWidth <= 768) {
-            return `<div class="knockout-matchup"><div class="match-row"><div class="team-details">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><input type="number" class="score-input ${wA ? 'winner' : (wB ? 'loser' : '')}" value="${sA}" ${id ? `onchange="updateKnockoutScore('${id}','A',this.value)"` : "disabled"}></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB.player1)}${photoHTML(m.teamB.player2)}<span>${m.teamB.name}</span></div><input type="number" class="score-input ${wB ? 'winner' : (wA ? 'loser' : '')}" value="${sB}" ${id ? `onchange="updateKnockoutScore('${id}','B',this.value)"` : "disabled"}></div></div>`;
-        }
-        // Versione Desktop
         return `<div class="knockout-matchup"><div class="knockout-team team-a ${wA ? "winner" : ""}"><span class="team-name-knockout">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}${m.teamA.name}</span></div><input type="number" class="score-knockout" value="${sA}" ${id ? `onchange="updateKnockoutScore('${id}','A',this.value)"` : "disabled"}><span class="knockout-vs">vs</span><input type="number" class="score-knockout" value="${sB}" ${id ? `onchange="updateKnockoutScore('${id}','B',this.value)"` : "disabled"}><div class="knockout-team team-b ${wB ? "winner" : ""}"><span class="team-name-knockout">${m.teamB.name}${photoHTML(m.teamB.player2)}${photoHTML(m.teamB.player1)}</span></div></div>`;
     }
 
@@ -245,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function updateLiveLeaderboard(standings) {
         const lb = document.getElementById("live-leaderboard"), topList = document.getElementById("top-teams-list"), bottomList = document.getElementById("bottom-teams-list");
-        if (standings.length === 0) return;
+        if (standings.length === 0) return lb.style.display = "none";
         lb.style.display = "block";
         topList.innerHTML = "";
         bottomList.innerHTML = "";
