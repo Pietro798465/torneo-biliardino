@@ -132,51 +132,63 @@ button:hover { background-color: #166fe5; }
 .btn-file { background-color: #e9ebee; color: #4b4f56; padding: 8px 15px; border-radius: 4px; border: none; cursor: pointer; width: auto; display: inline-block; }
 #file-name { margin-left: 10px; font-style: italic; color: #666; }
 #players-list-container, #teams-list, #round-robin-matches, #knockout-stage { margin-top: 20px; }
-.player-item, .match-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 8px; }
+.player-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 8px; }
 .player-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
 .player-item span { flex-grow: 1; }
 .player-item .btn-danger { width: 40px; height: 40px; padding: 0; flex-shrink: 0; margin-left: 15px; }
-.match-item > span { display: flex; align-items: center; gap: 8px; flex: 1; }
-.match-item > span:last-of-type { justify-content: flex-end; }
-.match-item input[type="number"] { width: 50px; text-align: center; }
 
-/* NUOVO LAYOUT LISTA SQUADRE */
-.team-item {
+/* NUOVO LAYOUT PARTITE GIRONI */
+.match-item {
     display: flex;
-    align-items: stretch;
-    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
     margin-bottom: 8px;
 }
-.team-name-input {
-    flex: 0 0 25%; /* Spazio fisso per il nome squadra */
-    font-size: 1.1em;
-    font-weight: bold;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-.team-player-box {
-    flex: 1; /* Occupa lo spazio rimanente diviso due */
+.match-item .team-info {
+    flex: 1;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px;
+}
+.match-item .team-info.team-b {
+    justify-content: flex-end;
+}
+.match-item .score-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.match-item .score-input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #f8f9fa;
 }
-.player-photo-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    flex-shrink: 0; /* Impedisce alla foto di rimpicciolirsi */
+.match-item .score-input.winner {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
 }
+.match-item .score-input.loser {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+.vs { font-weight: bold; margin: 0 10px; }
 /* FINE NUOVO LAYOUT */
 
-.vs { font-weight: bold; margin: 0 10px; }
+.team-item { display: flex; align-items: stretch; gap: 10px; margin-bottom: 8px; }
+.team-item .team-name-input { flex: 0 0 25%; font-size: 1.1em; font-weight: bold; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+.team-player-box { flex: 1; display: flex; align-items: center; gap: 8px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; }
+.player-photo-icon { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; background-color: #fff; flex-shrink: 0; }
+.team-player-box .player-photo-icon:first-child { margin-right: -15px; }
 
 /* =================================
    TABELLA CLASSIFICA
