@@ -9,7 +9,7 @@ body {
     padding: 20px;
 }
 
-h1, h2, h3 {
+h1, h2, h3, p {
     color: #1a2a4c;
     text-align: center;
 }
@@ -138,7 +138,7 @@ h1, h2, h3 {
 }
 
 /* =================================
-   STILI TABELLONE ELIMINAZIONE DIRETTA (NUOVO)
+   STILI TABELLONE ELIMINAZIONE DIRETTA
    ================================= */
 #knockout-stage {
     display: block;
@@ -309,10 +309,9 @@ button:hover { background-color: #166fe5; }
 }
 
 .player-item span {
-    flex-grow: 1; /* Fa sì che il nome occupi tutto lo spazio disponibile */
+    flex-grow: 1;
 }
 
-/* NUOVO STILE: Pulsante X rimpicciolito */
 .player-item .btn-danger {
     width: 40px;
     height: 40px;
@@ -326,19 +325,15 @@ button:hover { background-color: #166fe5; }
     text-align: center;
 }
 
-/* NUOVO STILE: Lista squadre bilanciata */
 .team-item {
     display: flex;
-    align-items: stretch; /* Allinea gli elementi in altezza */
+    align-items: stretch;
     gap: 10px;
     margin-bottom: 8px;
 }
 
-.team-item > * {
-    flex: 1; /* Ognuno occupa il 50% dello spazio */
-}
-
-.team-name-input {
+.team-item .team-name-input {
+    flex: 0 0 30%; /* Modifica: 30% al nome squadra */
     font-size: 1.1em;
     font-weight: bold;
     text-align: center;
@@ -346,7 +341,8 @@ button:hover { background-color: #166fe5; }
     border-radius: 4px;
 }
 
-.team-players {
+.team-item .team-players {
+    flex: 1; /* Modifica: occupa lo spazio rimanente */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -388,6 +384,9 @@ button:hover { background-color: #166fe5; }
     border-top: 4px solid #F44336;
 }
 
+#admin-panel h2, #admin-panel p {
+    color: #333;
+}
 #admin-panel h2 {
     color: #F44336;
 }
@@ -424,4 +423,24 @@ button:hover { background-color: #166fe5; }
 
 .btn-danger-outline:hover {
     background-color: #f2dede;
+}
+
+/* Stili per le nuove opzioni della fase finale */
+.knockout-options {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.knockout-options button {
+    flex: 1;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
 }
