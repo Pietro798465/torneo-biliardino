@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneo di Biliardino</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<!-- Classifica Live Fissa -->
+<div id="live-leaderboard" style="display: none;">
+    <h4>🏆 CLASSIFICA LIVE</h4>
+    <div class="leaderboard-section top-teams">
+        <h5>ZONA QUALIFICAZIONE</h5>
+        <ul id="top-teams-list">
+            <!-- Le squadre verranno inserite qui dal JavaScript -->
+        </ul>
+    </div>
+    <div class="leaderboard-section bottom-teams">
+        <h5>ZONA RISCHIO</h5>
+        <ul id="bottom-teams-list">
+            <!-- Le squadre verranno inserite qui dal JavaScript -->
+        </ul>
+    </div>
+</div>
+
+<!-- Splash Screen di Avvio con il TUO LOGO -->
+<div id="splash-screen">
+    <img src="logo.png" alt="Logo del Torneo" class="splash-logo">
+    <audio id="logo-sound" src="logo-sound.mp3"></audio>
+</div>
+
+<!-- Controlli Musica -->
+<div class="music-controls">
+    <span>Musica:</span>
+    <button id="play-btn">▶️ Play</button>
+    <button id="pause-btn">⏸️ Pausa</button>
+</div>
+<audio id="background-music" loop>
+    <source src="song2.mp3" type="audio/mpeg">
+    Il tuo browser non supporta l'elemento audio.
+</audio>
+
+<h1>Gestione Torneo di Biliardino</h1>
+
+<!-- Sezione 1: Registrazione Giocatori -->
+<div class="card">
+    <h2>1. Registra Giocatori</h2>
+    <form id="player-form">
+        <input type="text" id="player-name" placeholder="Nome Giocatore" required>
+        <select id="player-skill" required>
+            <option value="" disabled selected>Seleziona abilità</option>
+            <option value="forte">Forte</option>
+            <option value="scarso">Scarso</option>
+        </select>
+        <div class="file-input-wrapper">
+            <button type="button" class="btn-file">Scegli Foto</button>
+            <input type="file" id="player-photo" accept="image/*">
+            <span id="file-name">Nessuna foto selezionata</span>
+        </div>
+        <button type="submit">Aggiungi Giocatore</button>
+    </form>
+    <div id="players-list-container">
+        <h3>Giocatori Registrati</h3>
+        <div id="players-list"></div>
+    </div>
+</div>
+
+<!-- Sezione 2: Creazione Squadre -->
+<div class="card">
+    <h2>2. Crea le Squadre</h2>
+    <button id="create-teams-btn">Crea Squadre (Forte + Scarso)</button>
+    <div id="teams-list"></div>
+</div>
+
+<!-- Sezione 3: Fase a Gironi -->
+<div class="card">
+    <h2>3. Fase a Gironi (Tutti contro Tutti)</h2>
+    <button id="generate-round-robin-btn">Genera Partite Gironi</button>
+    <div id="round-robin-matches"></div>
+    <button id="calculate-standings-btn" style="display:none;">Mostra Classifica Completa</button>
+    <div id="standings-table"></div>
+</div>
+
+<!-- Sezione 4: Fase Finale -->
+<div class="card">
+    <h2>4. Fase Finale</h2>
+    <label for="num-qualifiers">Numero squadre qualificate (es. 4 o 8):</label>
+    <input type="number" id="num-qualifiers" value="4" min="2" step="2">
+    <button id="generate-knockout-btn">Genera Tabellone Eliminazione</button>
+    <div id="knockout-stage"></div>
+</div>
+
+<!-- Pannello di Controllo Amministratore -->
+<div class="card" id="admin-panel">
+    <h2>Pannello di Controllo (Admin)</h2>
+    <p class="warning"><strong>Attenzione:</strong> Usa questi pulsanti con cautela. Le azioni sono irreversibili.</p>
+    <div class="admin-buttons">
+        <button id="reset-teams-btn" class="btn-danger">Ripeti Sorteggio Squadre</button>
+        <button id="reset-tournament-btn" class="btn-danger">Azzera Torneo (Mantieni Giocatori)</button>
+        <button id="reset-all-btn" class="btn-danger-outline">RESET COMPLETO (CANCELLA TUTTO)</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
