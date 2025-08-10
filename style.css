@@ -181,44 +181,61 @@ button:hover { background-color: #166fe5; }
 .btn-secondary:hover { background-color: #5a6268; }
 
 /* =================================
-   REGOLE PER DISPOSITIVI MOBILI (Responsive Design)
+   REGOLE PER DISPOSITIVI MOBILI (Responsive Design) - VERSIONE CORRETTA
    ================================= */
 
-/* Si attivano solo per schermi larghi 768px o meno (tablet e smartphone) */
+/* Si attivano solo per schermi larghi 768px o meno */
 @media (max-width: 768px) {
 
-    /* 1. Riduci il padding generale e la dimensione del testo */
     body {
         padding: 10px;
+        -webkit-text-size-adjust: 100%; /* Impedisce l'ingrandimento automatico del testo su iOS */
     }
-    h1 {
-        font-size: 1.8em;
-    }
-    h2 {
-        font-size: 1.4em;
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.4em; }
+
+    .card {
+        padding: 15px;
     }
 
-    /* 2. Nascondi la classifica live fissa */
     #live-leaderboard {
-        display: none !important; /* !important forza la regola */
+        display: none !important;
     }
 
-    /* 3. Layout verticale per le squadre */
+    /* ---- Layout Lista Squadre ---- */
     .team-item {
-        flex-direction: column; /* I blocchi vanno uno sotto l'altro */
+        flex-direction: column;
+    }
+    .team-player-box {
+        justify-content: flex-start; /* Assicura che parta da sinistra */
+        word-break: break-word; /* Forza il testo ad andare a capo se necessario */
+    }
+    .team-item .team-name-input {
+        flex-basis: auto; /* Rimuove la base fissa */
     }
 
-    /* 4. Layout verticale per le partite dei gironi */
+    /* ---- Layout Partite Gironi ---- */
     .match-item {
         flex-direction: column;
         gap: 10px;
         padding: 15px;
     }
+    .match-item .team-info {
+        width: 100%; /* Occupa tutta la larghezza */
+        justify-content: center !important; /* Centra il contenuto della squadra */
+    }
     .match-item .team-info.team-b {
-        justify-content: flex-start; /* Allinea anche la squadra B a sinistra */
+        flex-direction: row-reverse; /* Inverte foto e testo per la squadra B */
+    }
+    .match-item .score-inputs {
+        width: 100%;
+        justify-content: center;
+    }
+    .match-item .score-input {
+        width: 50px; /* Riduciamo un po' i campi punteggio */
     }
 
-    /* 5. Layout verticale per il tabellone finale */
+    /* ---- Layout Tabellone Finale ---- */
     .knockout-matchup {
         flex-direction: column;
         width: 100%;
@@ -227,25 +244,36 @@ button:hover { background-color: #166fe5; }
     }
     .knockout-team {
         width: 100%;
-        box-sizing: border-box;
+        box-sizing: border-box; /* Assicura che padding e border non aggiungano larghezza */
+        justify-content: center !important; /* Centra il contenuto */
     }
     .knockout-team.team-a {
-        border-radius: 6px 6px 0 0; /* Angoli arrotondati solo sopra */
+        border-radius: 6px 6px 0 0;
         border-bottom: none;
     }
     .knockout-team.team-b {
-        border-radius: 0 0 6px 6px; /* Angoli arrotondati solo sotto */
+        border-radius: 0 0 6px 6px;
         border-top: none;
+        flex-direction: row-reverse;
+    }
+    .team-name-knockout {
+        white-space: normal; /* Permette al nome di andare a capo */
     }
     .score-knockout {
         margin: 5px 0;
     }
     .knockout-vs {
-        display: none; /* Nasconde il "vs" laterale */
+        display: block; /* Mostra il "vs" in verticale */
+        padding: 5px 0;
     }
 
-    /* 6. Layout verticale per i pulsanti della fase finale */
+    /* ---- Layout Opzioni Fase Finale ---- */
     .knockout-options {
         flex-direction: column;
+    }
+
+    /* ---- Layout Lista Giocatori ---- */
+    .player-item span {
+        word-break: break-word; /* Permette ai nomi lunghi di andare a capo */
     }
 }
