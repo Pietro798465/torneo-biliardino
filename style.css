@@ -151,15 +151,23 @@ button:hover { background-color: #166fe5; }
     flex: 1;
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* MODIFICATO: Allinea a sinistra */
-    gap: 8px;
-    padding: 10px;
+    justify-content: flex-start;
+    padding-left: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #f8f9fa;
 }
 
-.player-photo-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; background-color: #fff; flex-shrink: 0; }
+.player-photo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    flex-shrink: 0;
+    margin-right: 8px; /* Spazio tra foto e testo */
+}
 .vs { font-weight: bold; margin: 0 10px; }
 
 /* =================================
