@@ -24,7 +24,7 @@ h1, h2, h3 {
 }
 
 /* =================================
-   SCHERMATA "CLICCA PER INIZIARE" (VISIBILE ALL'INIZIO)
+   SCHERMATA "CLICCA PER INIZIARE"
    ================================= */
 #start-screen {
     position: fixed;
@@ -37,7 +37,7 @@ h1, h2, h3 {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10001; /* Z-index più alto per essere sopra a tutto */
+    z-index: 10001;
     cursor: pointer;
     font-family: 'Arial Black', Gadget, sans-serif;
     font-size: 2em;
@@ -45,10 +45,10 @@ h1, h2, h3 {
 }
 
 /* =================================
-   SPLASH SCREEN (CON LOGO) - NASCOSTA ALL'INIZIO
+   SPLASH SCREEN (CON LOGO)
    ================================= */
 #splash-screen {
-    display: none; /* Nascosta di default, attivata da JavaScript */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -57,7 +57,7 @@ h1, h2, h3 {
     background-color: #000;
     justify-content: center;
     align-items: center;
-    z-index: 10000; /* Z-index alto ma inferiore a #start-screen */
+    z-index: 10000;
     animation: splashAnimation 5s forwards;
 }
 
@@ -131,8 +131,92 @@ h1, h2, h3 {
 #live-leaderboard li .team-pos { font-weight: bold; margin-right: 8px; }
 #live-leaderboard li .team-points { font-weight: bold; }
 
+.tie-breaker-star {
+    color: #ffc107;
+    font-weight: bold;
+    margin-left: 4px;
+}
+
 /* =================================
-   ELEMENTI DELLE CARD (FORM, LISTE, PARTITE)
+   STILI TABELLONE ELIMINAZIONE DIRETTA (NUOVO)
+   ================================= */
+#knockout-stage {
+    display: block;
+    padding: 20px 0;
+}
+
+.knockout-round {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.knockout-round h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.knockout-matchup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 600px;
+}
+
+.knockout-team {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.knockout-team.team-a {
+    justify-content: flex-start;
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+}
+
+.knockout-team.team-b {
+    justify-content: flex-end;
+    text-align: right;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+}
+
+.team-name-knockout {
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+.score-knockout {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #343a40;
+    padding: 5px 15px;
+    border-radius: 4px;
+    border: none;
+    width: 40px; /* Larghezza fissa per i punteggi */
+}
+
+.knockout-vs {
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 0 15px;
+    color: #6c757d;
+}
+
+.knockout-team.winner .team-name-knockout {
+    color: #28a745; /* Verde per il vincitore */
+}
+
+
+/* =================================
+   ELEMENTI DELLE CARD
    ================================= */
 input[type="text"], input[type="number"], select {
     width: calc(100% - 22px);
@@ -305,10 +389,4 @@ button:hover { background-color: #166fe5; }
 
 .btn-danger-outline:hover {
     background-color: #f2dede;
-}
-/* Stile per l'asterisco dello scontro diretto */
-.tie-breaker-star {
-    color: #ffc107; /* Giallo oro, come il titolo della classifica */
-    font-weight: bold;
-    margin-left: 4px;
 }
