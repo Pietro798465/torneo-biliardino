@@ -179,3 +179,73 @@ button:hover { background-color: #166fe5; }
 .knockout-options button { flex: 1; }
 .btn-secondary { background-color: #6c757d; border-color: #6c757d; }
 .btn-secondary:hover { background-color: #5a6268; }
+
+/* =================================
+   REGOLE PER DISPOSITIVI MOBILI (Responsive Design)
+   ================================= */
+
+/* Si attivano solo per schermi larghi 768px o meno (tablet e smartphone) */
+@media (max-width: 768px) {
+
+    /* 1. Riduci il padding generale e la dimensione del testo */
+    body {
+        padding: 10px;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    h2 {
+        font-size: 1.4em;
+    }
+
+    /* 2. Nascondi la classifica live fissa */
+    #live-leaderboard {
+        display: none !important; /* !important forza la regola */
+    }
+
+    /* 3. Layout verticale per le squadre */
+    .team-item {
+        flex-direction: column; /* I blocchi vanno uno sotto l'altro */
+    }
+
+    /* 4. Layout verticale per le partite dei gironi */
+    .match-item {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+    }
+    .match-item .team-info.team-b {
+        justify-content: flex-start; /* Allinea anche la squadra B a sinistra */
+    }
+
+    /* 5. Layout verticale per il tabellone finale */
+    .knockout-matchup {
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        gap: 0;
+    }
+    .knockout-team {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .knockout-team.team-a {
+        border-radius: 6px 6px 0 0; /* Angoli arrotondati solo sopra */
+        border-bottom: none;
+    }
+    .knockout-team.team-b {
+        border-radius: 0 0 6px 6px; /* Angoli arrotondati solo sotto */
+        border-top: none;
+    }
+    .score-knockout {
+        margin: 5px 0;
+    }
+    .knockout-vs {
+        display: none; /* Nasconde il "vs" laterale */
+    }
+
+    /* 6. Layout verticale per i pulsanti della fase finale */
+    .knockout-options {
+        flex-direction: column;
+    }
+}
