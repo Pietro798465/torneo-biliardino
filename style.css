@@ -109,14 +109,7 @@ h1, h2, h3, p {
 #knockout-stage { display: block; padding: 20px 0; }
 .knockout-round { text-align: center; margin-bottom: 25px; }
 .knockout-round h3 { text-align: center; margin-bottom: 20px; color: #333; }
-.knockout-matchup {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px auto;
-    width: 100%; /* Modifica: larghezza piena */
-    max-width: 750px; /* Modifica: larghezza massima aumentata */
-}
+.knockout-matchup { display: flex; justify-content: center; align-items: center; margin: 20px auto; width: 100%; max-width: 750px; }
 .knockout-team { flex: 1; display: flex; align-items: center; padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; height: 40px; }
 .knockout-team.team-a { justify-content: flex-start; border-right: none; border-radius: 6px 0 0 6px; }
 .knockout-team.team-b { justify-content: flex-end; text-align: right; border-left: none; border-radius: 0 6px 6px 0; }
@@ -181,106 +174,29 @@ button:hover { background-color: #166fe5; }
 .btn-secondary:hover { background-color: #5a6268; }
 
 /* =================================
-   REGOLE PER DISPOSITIVI MOBILI (Responsive Design) - VERSIONE FINALE
+   REGOLE PER DISPOSITIVI MOBILI (Responsive Design)
    ================================= */
-
-/* Si attivano solo per schermi larghi 768px o meno */
 @media (max-width: 768px) {
-
-    body {
-        padding: 10px;
-        -webkit-text-size-adjust: 100%;
-    }
+    body { padding: 10px; -webkit-text-size-adjust: 100%; }
     h1 { font-size: 1.8em; }
     h2 { font-size: 1.4em; }
-
-    .card {
-        padding: 15px;
-    }
-
-    /* ---- NUOVA GESTIONE CLASSIFICA LIVE A SCOMPARSA ---- */
-    #live-leaderboard {
-        position: fixed;
-        top: 0;
-        right: -260px; /* Nascosta fuori dallo schermo */
-        width: 250px;
-        height: 100%;
-        transition: right 0.3s ease-in-out; /* Animazione di entrata/uscita */
-        display: block !important;
-        padding-top: 50px; /* Spazio per il pulsante */
-        box-sizing: border-box;
-    }
-    #live-leaderboard.visible {
-        right: 0; /* Visibile dentro lo schermo */
-    }
-    #leaderboard-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 10px;
-        left: -50px; /* Posizionato a sinistra della classifica */
-        width: 50px;
-        height: 50px;
-        background-color: rgba(20, 20, 40, 0.9);
-        color: #ffc107;
-        font-size: 24px;
-        border-radius: 10px 0 0 10px;
-        cursor: pointer;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-right: none;
-    }
-    /* FINE NUOVA GESTIONE */
-
-
-    /* ---- Layout Lista Squadre ---- */
-    .team-item {
-        flex-direction: column;
-    }
-    .team-player-box {
-        justify-content: flex-start;
-        word-break: break-word;
-    }
-    .team-item .team-name-input {
-        flex-basis: auto;
-    }
-
-    /* ---- Layout Partite Gironi e FASE FINALE (Mobile) ---- */
-    .match-item, .knockout-matchup {
-        flex-direction: column;
-        padding: 15px;
-        position: relative;
-        gap: 0;
-    }
-    .match-item .score-inputs, .knockout-matchup .score-inputs { /* Applica a entrambi */
-        display: none; /* Nascondiamo la vecchia struttura */
-    }
-    .match-item .team-info, .knockout-matchup .knockout-team { /* Applica a entrambi */
-        display: none; /* Nascondiamo la vecchia struttura */
-    }
-    .match-row {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        justify-content: space-between;
-    }
-    .team-details {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .vs-mobile {
-        font-weight: bold;
-        color: #6c757d;
-        padding: 5px 0;
-        text-align: center;
-    }
-    
-    .knockout-options {
-        flex-direction: column;
-    }
-
-    .player-item span {
-        word-break: break-word;
-    }
+    .card { padding: 15px; }
+    #live-leaderboard { display: none !important; }
+    .team-item { flex-direction: column; }
+    .team-player-box { justify-content: flex-start; word-break: break-word; }
+    .team-item .team-name-input { flex-basis: auto; }
+    .match-item { flex-direction: column; gap: 10px; padding: 15px; }
+    .match-item .team-info { width: 100%; justify-content: center !important; }
+    .match-item .team-info.team-b { flex-direction: row-reverse; }
+    .match-item .score-inputs { width: 100%; justify-content: center; }
+    .match-item .score-input { width: 50px; }
+    .knockout-matchup { flex-direction: column; width: 100%; max-width: 100%; gap: 0; }
+    .knockout-team { width: 100%; box-sizing: border-box; justify-content: center !important; }
+    .knockout-team.team-a { border-radius: 6px 6px 0 0; border-bottom: none; }
+    .knockout-team.team-b { border-radius: 0 0 6px 6px; border-top: none; flex-direction: row-reverse; }
+    .team-name-knockout { white-space: normal; }
+    .score-knockout { margin: 5px 0; }
+    .knockout-vs { display: block; padding: 5px 0; }
+    .knockout-options { flex-direction: column; }
+    .player-item span { word-break: break-word; }
 }
