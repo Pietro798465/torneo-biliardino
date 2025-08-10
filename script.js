@@ -66,8 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNZIONI UTILITY ---
     const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
     document.getElementById("player-photo").addEventListener("change", e => { document.getElementById("file-name").textContent = e.target.files[0]?.name || "Nessuna foto selezionata" });
-    const photoHTML = (player) => `<img src="${player.photo || 'https://via.placeholder.com/50'}" alt="${player.name || ''}" class="player-photo-icon">`;
-
+    
     // --- SEZIONE GIOCATORI ---
     playerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -103,13 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await deleteCollection("roundRobinMatches");
         let teams = [...localTeams];
         if (teams.length % 2 !== 0) teams.push({ id: "BYE" });
-        for (let i = 0; i < teams.length; i++) {
-            for (let j = i + 1; j < teams.length; j++) {
-                if (teams[i].id !== "BYE" && teams[j].id !== "BYE") {
-                    await db.collection("roundRobinMatches").add({ teamA: teams[i], teamB: teams[j], scoreA: null, scoreB: null });
-                }
-            }
-        }
+        for (let i = 0; i < teams.length; i++) for (let j = i + 1; j < teams.length; j++) if (teams[i].id !== "BYE" && teams[j].id !== "BYE") await db.collection("roundRobinMatches").add({ teamA: teams[i], teamB: teams[j], scoreA: null, scoreB: null });
         alert("Calendario generato!");
         calculateStandingsBtn.style.display = "block";
     });
@@ -137,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     generateRandomKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(true));
     window.updateKnockoutScore = async (id, team, score) => await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
 
-    // --- FUNZIONI DI RENDER (Stabili e Leggibili) ---
+    // --- FUNZIONI DI RENDER (Senza foto extra) ---
     function renderPlayers() {
         playersList.innerHTML = "";
         localPlayers.forEach(p => {
@@ -148,13 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
             playersList.appendChild(div);
         });
     }
-    
+
     function renderTeams() {
         teamsList.innerHTML = "";
         localTeams.forEach(t => {
             const div = document.createElement("div");
             div.className = "team-item";
-            div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><span class="team-players">${photoHTML(t.player1)}${photoHTML(t.player2)} ${t.player1.name} & ${t.player2.name}</span>`;
+            div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><span class="team-players">${t.player1.name} & ${t.player2.name}</span>`;
             teamsList.appendChild(div);
         });
     }
@@ -164,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localRoundRobinMatches.forEach(m => {
             const div = document.createElement("div");
             div.className = "match-item";
-            div.innerHTML = `<span>${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}${m.teamA.name}</span><input type="number" value="${m.scoreA ?? ''}" onchange="updateScore('${m.id}','A',this.value)"><span class="vs">vs</span><input type="number" value="${m.scoreB ?? ''}" onchange="updateScore('${m.id}','B',this.value)"><span>${m.teamB.name}${photoHTML(m.teamB.player2)}${photoHTML(m.teamB.player1)}</span>`;
+            div.innerHTML = `<span>${m.teamA.name}</span><input type="number" value="${m.scoreA ?? ''}" onchange="updateScore('${m.id}','A',this.value)"><span class="vs">vs</span><input type="number" value="${m.scoreB ?? ''}" onchange="updateScore('${m.id}','B',this.value)"><span>${m.teamB.name}</span>`;
             roundRobinMatchesDiv.appendChild(div);
         });
     }
@@ -193,8 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
             db.collection("knockoutMatches").add(finalMatch).then(ref => db.collection("knockoutMatches").doc(ref.id).update({ id: ref.id }));
         }
         
-        const finalTeamA = finalMatch ? finalMatch.teamA : { name: "Da definire", player1: {}, player2: {} };
-        const finalTeamB = finalMatch ? finalMatch.teamB : { name: "Da definire", player1: {}, player2: {} };
+        const finalTeamA = finalMatch ? finalMatch.teamA : { name: "Da definire" };
+        const finalTeamB = finalMatch ? finalMatch.teamB : { name: "Da definire" };
         const finalData = { ...finalMatch, teamA: finalTeamA, teamB: finalTeamB };
         finalHTML += createMatchupHTML(finalData);
         finalHTML += '</div>';
@@ -211,13 +204,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         return `<div class="knockout-matchup">
             <div class="knockout-team team-a ${isWinnerA ? 'winner' : ''}">
-                <span class="team-name-knockout">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}${m.teamA.name}</span>
+                <span class="team-name-knockout">${m.teamA.name}</span>
             </div>
             <input type="number" class="score-knockout" value="${scoreA}" ${id ? `onchange="updateKnockoutScore('${id}','A',this.value)"` : "disabled"}>
             <span class="knockout-vs">vs</span>
             <input type="number" class="score-knockout" value="${scoreB}" ${id ? `onchange="updateKnockoutScore('${id}','B',this.value)"` : "disabled"}>
             <div class="knockout-team team-b ${isWinnerB ? 'winner' : ''}">
-                <span class="team-name-knockout">${m.teamB.name}${photoHTML(m.teamB.player2)}${photoHTML(m.teamB.player1)}</span>
+                <span class="team-name-knockout">${m.teamB.name}</span>
             </div>
         </div>`;
     }
