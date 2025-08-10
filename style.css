@@ -198,9 +198,40 @@ button:hover { background-color: #166fe5; }
         padding: 15px;
     }
 
+    /* ---- NUOVA GESTIONE CLASSIFICA LIVE A SCOMPARSA ---- */
     #live-leaderboard {
-        display: none !important;
+        position: fixed;
+        top: 0;
+        right: -260px; /* Nascosta fuori dallo schermo */
+        width: 250px;
+        height: 100%;
+        transition: right 0.3s ease-in-out; /* Animazione di entrata/uscita */
+        display: block !important;
+        padding-top: 50px; /* Spazio per il pulsante */
+        box-sizing: border-box;
     }
+    #live-leaderboard.visible {
+        right: 0; /* Visibile dentro lo schermo */
+    }
+    #leaderboard-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 10px;
+        left: -50px; /* Posizionato a sinistra della classifica */
+        width: 50px;
+        height: 50px;
+        background-color: rgba(20, 20, 40, 0.9);
+        color: #ffc107;
+        font-size: 24px;
+        border-radius: 10px 0 0 10px;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-right: none;
+    }
+    /* FINE NUOVA GESTIONE */
+
 
     /* ---- Layout Lista Squadre ---- */
     .team-item {
@@ -214,24 +245,19 @@ button:hover { background-color: #166fe5; }
         flex-basis: auto;
     }
 
-    /* ---- NUOVO LAYOUT PARTITE GIRONI (Mobile) ---- */
-    .match-item {
+    /* ---- Layout Partite Gironi e FASE FINALE (Mobile) ---- */
+    .match-item, .knockout-matchup {
         flex-direction: column;
         padding: 15px;
-        position: relative; /* Necessario per posizionare il "vs" */
+        position: relative;
+        gap: 0;
     }
-    .match-item .score-inputs {
-        order: -1; /* Sposta i punteggi sopra le squadre */
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 10px;
+    .match-item .score-inputs, .knockout-matchup .score-inputs { /* Applica a entrambi */
+        display: none; /* Nascondiamo la vecchia struttura */
     }
-    .match-item .team-info {
-        display: none; /* Nascondiamo il vecchio contenitore */
+    .match-item .team-info, .knockout-matchup .knockout-team { /* Applica a entrambi */
+        display: none; /* Nascondiamo la vecchia struttura */
     }
-    /* Creiamo i nuovi contenitori per le righe */
     .match-row {
         display: flex;
         align-items: center;
@@ -249,41 +275,7 @@ button:hover { background-color: #166fe5; }
         padding: 5px 0;
         text-align: center;
     }
-    /* FINE NUOVO LAYOUT */
-
-
-    /* ---- Layout Tabellone Finale ---- */
-    .knockout-matchup {
-        flex-direction: column;
-        width: 100%;
-        max-width: 100%;
-        gap: 0;
-    }
-    .knockout-team {
-        width: 100%;
-        box-sizing: border-box;
-        justify-content: center !important;
-    }
-    .knockout-team.team-a {
-        border-radius: 6px 6px 0 0;
-        border-bottom: none;
-    }
-    .knockout-team.team-b {
-        border-radius: 0 0 6px 6px;
-        border-top: none;
-        flex-direction: row-reverse;
-    }
-    .team-name-knockout {
-        white-space: normal;
-    }
-    .score-knockout {
-        margin: 5px 0;
-    }
-    .knockout-vs {
-        display: block;
-        padding: 5px 0;
-    }
-
+    
     .knockout-options {
         flex-direction: column;
     }
