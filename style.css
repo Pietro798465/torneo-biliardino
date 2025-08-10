@@ -146,11 +146,12 @@ button:hover { background-color: #166fe5; }
 .team-item { display: flex; align-items: stretch; gap: 10px; margin-bottom: 8px; }
 .team-item .team-name-input { flex: 0 0 25%; font-size: 1.1em; font-weight: bold; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
 
+/* REGOLA CORRETTA PER ALLINEAMENTO TESTO */
 .team-player-box {
     flex: 1;
     display: flex;
     align-items: center;
-    justify-content: center; /* RIGA CORRETTA */
+    justify-content: flex-start; /* MODIFICATO: Allinea a sinistra */
     gap: 8px;
     padding: 10px;
     border: 1px solid #ccc;
