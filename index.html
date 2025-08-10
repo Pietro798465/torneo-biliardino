@@ -48,9 +48,9 @@
     <form id="player-form">
         <input type="text" id="player-name" placeholder="Nome Giocatore" required>
         <select id="player-skill" required>
-            <option value="" disabled selected>Seleziona abilità</option>
-            <option value="forte">Forte</option>
-            <option value="scarso">Scarso</option>
+            <option value="" disabled selected>Seleziona livello</option>
+            <option value="top_player">Top Player</option>
+            <option value="player">Player</option>
         </select>
         <div class="file-input-wrapper">
             <button type="button" class="btn-file">Scegli Foto</button>
@@ -68,7 +68,7 @@
 <!-- Sezione 2: Creazione Squadre -->
 <div class="card">
     <h2>2. Crea le Squadre</h2>
-    <button id="create-teams-btn">Crea Squadre (Forte + Scarso)</button>
+    <button id="create-teams-btn">Crea Squadre (Top Player + Player)</button>
     <div id="teams-list"></div>
 </div>
 
@@ -81,12 +81,14 @@
     <div id="standings-table"></div>
 </div>
 
-<!-- Sezione 4: Fase Finale -->
+<!-- Sezione 4: Fase Finale (Sempre a 4 Squadre) -->
 <div class="card">
-    <h2>4. Fase Finale</h2>
-    <label for="num-qualifiers">Numero squadre qualificate (es. 4 o 8):</label>
-    <input type="number" id="num-qualifiers" value="4" min="2" step="2">
-    <button id="generate-knockout-btn">Genera Tabellone Eliminazione</button>
+    <h2>4. Fase Finale (Semifinali)</h2>
+    <p>Scegli come generare gli accoppiamenti per le semifinali tra le prime 4 squadre classificate.</p>
+    <div class="knockout-options">
+        <button id="generate-standard-knockout-btn">Genera Standard (1ª vs 4ª, 2ª vs 3ª)</button>
+        <button id="generate-random-knockout-btn" class="btn-secondary">Genera Casuale</button>
+    </div>
     <div id="knockout-stage"></div>
 </div>
 
