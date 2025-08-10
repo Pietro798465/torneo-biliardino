@@ -444,3 +444,53 @@ button:hover { background-color: #166fe5; }
 .btn-secondary:hover {
     background-color: #5a6268;
 }
+/* =================================
+   STILI PER LE FOTO DEI GIOCATORI NELLE LISTE
+   ================================= */
+
+/* Stile base per le foto piccole e circolari */
+.player-photo-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    background-color: #fff; /* Sfondo bianco se l'immagine è trasparente */
+}
+
+/* Allinea le foto nella lista squadre */
+.team-players {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Spazio tra le foto e i nomi */
+}
+.team-players .player-photo-icon:first-child {
+    margin-right: -15px; /* Sovrappone leggermente le foto */
+}
+
+/* Allinea le foto nella lista partite dei gironi */
+.match-item > span:first-of-type { /* Seleziona il primo span (squadra A) */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex: 1;
+}
+.match-item > span:last-of-type { /* Seleziona l'ultimo span (squadra B) */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex: 1;
+    text-align: right;
+}
+
+/* Allinea le foto nel tabellone finale */
+.knockout-team .team-name-knockout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.knockout-team.team-b .team-name-knockout {
+    flex-direction: row-reverse; /* Inverte l'ordine per le squadre a destra */
+}
