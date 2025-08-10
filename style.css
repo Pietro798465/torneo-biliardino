@@ -92,355 +92,112 @@ h1, h2, h3, p {
     backdrop-filter: blur(5px);
 }
 
-#live-leaderboard h4 {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 16px;
-    color: #ffc107;
-}
-
-.leaderboard-section {
-    margin-bottom: 10px;
-}
-
-.leaderboard-section h5 {
-    margin: 0 0 5px 0;
-    font-size: 12px;
-    text-transform: uppercase;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding-bottom: 3px;
-}
-
+#live-leaderboard h4 { text-align: center; margin-top: 0; margin-bottom: 15px; font-size: 16px; color: #ffc107; }
+.leaderboard-section { margin-bottom: 10px; }
+.leaderboard-section h5 { margin: 0 0 5px 0; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 3px; }
 .leaderboard-section.top-teams h5 { color: #4CAF50; }
 .leaderboard-section.bottom-teams h5 { color: #F44336; }
-
-#live-leaderboard ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-#live-leaderboard li {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 0;
-    font-size: 14px;
-}
-
+#live-leaderboard ul { list-style: none; padding: 0; margin: 0; }
+#live-leaderboard li { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
 #live-leaderboard li .team-pos { font-weight: bold; margin-right: 8px; }
 #live-leaderboard li .team-points { font-weight: bold; }
-
-.tie-breaker-star {
-    color: #ffc107;
-    font-weight: bold;
-    margin-left: 4px;
-}
+.tie-breaker-star { color: #ffc107; font-weight: bold; margin-left: 4px; }
 
 /* =================================
    STILI TABELLONE ELIMINAZIONE DIRETTA
    ================================= */
-#knockout-stage {
-    display: block;
-    padding: 20px 0;
-}
-
-.knockout-round {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.knockout-round h3 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.knockout-matchup {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px auto;
-    width: 90%;
-    max-width: 600px;
-}
-
-.knockout-team {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-}
-
-.knockout-team.team-a {
-    justify-content: flex-start;
-    border-right: none;
-    border-radius: 6px 0 0 6px;
-}
-
-.knockout-team.team-b {
-    justify-content: flex-end;
-    text-align: right;
-    border-left: none;
-    border-radius: 0 6px 6px 0;
-}
-
-.team-name-knockout {
-    font-weight: bold;
-    margin: 0 10px;
-}
-
-.score-knockout {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #fff;
-    background-color: #343a40;
-    padding: 5px 15px;
-    border-radius: 4px;
-    border: none;
-    width: 40px;
-}
-
-.knockout-vs {
-    font-weight: bold;
-    font-size: 1.2em;
-    padding: 0 15px;
-    color: #6c757d;
-}
-
-.knockout-team.winner .team-name-knockout {
-    color: #28a745;
-}
+#knockout-stage { display: block; padding: 20px 0; }
+.knockout-round { text-align: center; margin-bottom: 25px; }
+.knockout-round h3 { text-align: center; margin-bottom: 20px; color: #333; }
+.knockout-matchup { display: flex; justify-content: center; align-items: center; margin: 20px auto; width: 90%; max-width: 600px; }
+.knockout-team { flex: 1; display: flex; align-items: center; padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; }
+.knockout-team.team-a { justify-content: flex-start; border-right: none; border-radius: 6px 0 0 6px; }
+.knockout-team.team-b { justify-content: flex-end; text-align: right; border-left: none; border-radius: 0 6px 6px 0; }
+.team-name-knockout { font-weight: bold; margin: 0 10px; display: flex; align-items: center; gap: 8px; }
+.knockout-team.team-b .team-name-knockout { flex-direction: row-reverse; }
+.score-knockout { font-size: 1.5em; font-weight: bold; color: #fff; background-color: #343a40; padding: 5px 15px; border-radius: 4px; border: none; width: 40px; }
+.knockout-vs { font-weight: bold; font-size: 1.2em; padding: 0 15px; color: #6c757d; }
+.knockout-team.winner .team-name-knockout { color: #28a745; }
 
 
 /* =================================
    ELEMENTI DELLE CARD
    ================================= */
-input[type="text"], input[type="number"], select {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-}
-
-button {
-    background-color: #1877f2;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-    display: block;
-    width: 100%;
-    transition: background-color 0.2s;
-}
-
+input[type="text"], input[type="number"], select { width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+button { background-color: #1877f2; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; display: block; width: 100%; transition: background-color 0.2s; }
 button:hover { background-color: #166fe5; }
+#player-form { display: flex; flex-direction: column; gap: 10px; }
+.file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 5px; box-sizing: border-box; }
+.file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+.btn-file { background-color: #e9ebee; color: #4b4f56; padding: 8px 15px; border-radius: 4px; border: none; cursor: pointer; width: auto; display: inline-block; }
+#file-name { margin-left: 10px; font-style: italic; color: #666; }
+#players-list-container, #teams-list, #round-robin-matches, #knockout-stage { margin-top: 20px; }
+.player-item, .match-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 8px; }
+.player-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
+.player-item span { flex-grow: 1; }
+.player-item .btn-danger { width: 40px; height: 40px; padding: 0; flex-shrink: 0; margin-left: 15px; }
+.match-item > span { display: flex; align-items: center; gap: 8px; flex: 1; }
+.match-item > span:last-of-type { justify-content: flex-end; }
+.match-item input[type="number"] { width: 50px; text-align: center; }
 
-#player-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.file-input-wrapper {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 5px;
-    box-sizing: border-box;
-}
-
-.file-input-wrapper input[type=file] {
-    font-size: 100px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.btn-file {
-    background-color: #e9ebee;
-    color: #4b4f56;
-    padding: 8px 15px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    width: auto;
-    display: inline-block;
-}
-
-#file-name {
-    margin-left: 10px;
-    font-style: italic;
-    color: #666;
-}
-
-#players-list-container, #teams-list, #round-robin-matches, #knockout-stage {
-    margin-top: 20px;
-}
-
-.player-item, .match-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    border: 1px solid #eee;
-    border-radius: 4px;
-    margin-bottom: 8px;
-}
-
-.player-item img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 15px;
-}
-
-.player-item span {
-    flex-grow: 1;
-}
-
-.player-item .btn-danger {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    flex-shrink: 0;
-    margin-left: 15px;
-}
-
-.match-item input[type="number"] {
-    width: 50px;
-    text-align: center;
-}
-
+/* NUOVO LAYOUT LISTA SQUADRE */
 .team-item {
     display: flex;
     align-items: stretch;
     gap: 10px;
     margin-bottom: 8px;
 }
-
-.team-item .team-name-input {
-    flex: 0 0 30%;
+.team-name-input {
+    flex: 0 0 25%; /* Spazio fisso per il nome squadra */
     font-size: 1.1em;
     font-weight: bold;
     text-align: center;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
-
-.team-item .team-players {
-    flex: 1;
+.team-player-box {
+    flex: 1; /* Occupa lo spazio rimanente diviso due */
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #f8f9fa;
-    text-align: center;
 }
+.player-photo-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    flex-shrink: 0; /* Impedisce alla foto di rimpicciolirsi */
+}
+/* FINE NUOVO LAYOUT */
 
-.vs {
-    font-weight: bold;
-    margin: 0 10px;
-}
+.vs { font-weight: bold; margin: 0 10px; }
 
 /* =================================
    TABELLA CLASSIFICA
    ================================= */
-#standings-table table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-
-#standings-table th, #standings-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
-
-#standings-table th {
-    background-color: #f2f2f2;
-}
+#standings-table table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+#standings-table th, #standings-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+#standings-table th { background-color: #f2f2f2; }
 
 /* =================================
    PANNELLO DI CONTROLLO (ADMIN)
    ================================= */
-#admin-panel {
-    border-top: 4px solid #F44336;
-}
-
-#admin-panel h2, #admin-panel p {
-    color: #333;
-}
-#admin-panel h2 {
-    color: #F44336;
-}
-
-.warning {
-    background-color: #fffbe6;
-    border: 1px solid #ffe58f;
-    padding: 10px;
-    border-radius: 4px;
-    color: #8a6d3b;
-    text-align: center;
-}
-
-.admin-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.btn-danger {
-    background-color: #d9534f;
-}
-
-.btn-danger:hover {
-    background-color: #c9302c;
-}
-
-.btn-danger-outline {
-    background-color: white;
-    color: #d9534f;
-    border: 2px solid #d9534f;
-}
-
-.btn-danger-outline:hover {
-    background-color: #f2dede;
-}
-
-/* Stili per le nuove opzioni della fase finale */
-.knockout-options {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.knockout-options button {
-    flex: 1;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    border-color: #6c757d;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-}```
+#admin-panel { border-top: 4px solid #F44336; }
+#admin-panel h2, #admin-panel p { color: #333; }
+#admin-panel h2 { color: #F44336; }
+.warning { background-color: #fffbe6; border: 1px solid #ffe58f; padding: 10px; border-radius: 4px; color: #8a6d3b; text-align: center; }
+.admin-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+.btn-danger { background-color: #d9534f; }
+.btn-danger:hover { background-color: #c9302c; }
+.btn-danger-outline { background-color: white; color: #d9534f; border: 2px solid #d9534f; }
+.btn-danger-outline:hover { background-color: #f2dede; }
+.knockout-options { display: flex; gap: 15px; margin-bottom: 20px; }
+.knockout-options button { flex: 1; }
+.btn-secondary { background-color: #6c757d; border-color: #6c757d; }
+.btn-secondary:hover { background-color: #5a6268; }
