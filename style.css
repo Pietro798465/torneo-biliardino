@@ -190,6 +190,13 @@ h1, h2, h3, p {
 .team-name-knockout {
     font-weight: bold;
     margin: 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.knockout-team.team-b .team-name-knockout {
+    flex-direction: row-reverse;
 }
 
 .score-knockout {
@@ -301,8 +308,8 @@ button:hover { background-color: #166fe5; }
 }
 
 .player-item img {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
     margin-right: 15px;
@@ -320,6 +327,17 @@ button:hover { background-color: #166fe5; }
     margin-left: 15px;
 }
 
+.match-item > span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.match-item > span:last-of-type {
+    justify-content: flex-end;
+}
+
 .match-item input[type="number"] {
     width: 50px;
     text-align: center;
@@ -333,7 +351,7 @@ button:hover { background-color: #166fe5; }
 }
 
 .team-item .team-name-input {
-    flex: 0 0 30%; /* Modifica: 30% al nome squadra */
+    flex: 0 0 30%;
     font-size: 1.1em;
     font-weight: bold;
     text-align: center;
@@ -342,7 +360,7 @@ button:hover { background-color: #166fe5; }
 }
 
 .team-item .team-players {
-    flex: 1; /* Modifica: occupa lo spazio rimanente */
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -351,11 +369,25 @@ button:hover { background-color: #166fe5; }
     border-radius: 4px;
     background-color: #f8f9fa;
     text-align: center;
+    gap: 8px;
 }
 
 .vs {
     font-weight: bold;
     margin: 0 10px;
+}
+
+.player-photo-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+
+.team-players .player-photo-icon:first-child {
+    margin-right: -15px;
 }
 
 /* =================================
@@ -443,54 +475,4 @@ button:hover { background-color: #166fe5; }
 
 .btn-secondary:hover {
     background-color: #5a6268;
-}
-/* =================================
-   STILI PER LE FOTO DEI GIOCATORI NELLE LISTE
-   ================================= */
-
-/* Stile base per le foto piccole e circolari */
-.player-photo-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid #ddd;
-    background-color: #fff; /* Sfondo bianco se l'immagine è trasparente */
-}
-
-/* Allinea le foto nella lista squadre */
-.team-players {
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Spazio tra le foto e i nomi */
-}
-.team-players .player-photo-icon:first-child {
-    margin-right: -15px; /* Sovrappone leggermente le foto */
-}
-
-/* Allinea le foto nella lista partite dei gironi */
-.match-item > span:first-of-type { /* Seleziona il primo span (squadra A) */
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 8px;
-    flex: 1;
-}
-.match-item > span:last-of-type { /* Seleziona l'ultimo span (squadra B) */
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-    flex: 1;
-    text-align: right;
-}
-
-/* Allinea le foto nel tabellone finale */
-.knockout-team .team-name-knockout {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.knockout-team.team-b .team-name-knockout {
-    flex-direction: row-reverse; /* Inverte l'ordine per le squadre a destra */
 }
