@@ -63,58 +63,126 @@ document.addEventListener('DOMContentLoaded', () => {
     let localPlayers = [], localTeams = [], localRoundRobinMatches = [], localKnockoutMatches = [];
 
     // --- SEZIONE GIOCATORI ---
-    playerForm.addEventListener('submit', async(e)=>{e.preventDefault();const[t,l,a]=[document.getElementById("player-name").value,document.getElementById("player-skill").value,document.getElementById("player-photo")],n=a.files[0]?await toBase64(a.files[0]):null;await db.collection("players").add({name:t,skill:l,photo:n}),playerForm.reset(),document.getElementById("file-name").textContent="Nessuna foto selezionata"});
-    window.deletePlayer=async e=>{confirm("Eliminare questo giocatore?")&&await db.collection("players").doc(e).delete()};
+    playerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('player-name').value;
+        const skill = document.getElementById('player-skill').value;
+        const photoInput = document.getElementById('player-photo');
+        const photoBase64 = photoInput.files[0] ? await toBase64(photoInput.files[0]) : null;
+        
+        await db.collection('players').add({ name, skill, photo: photoBase64 });
+        playerForm.reset();
+        document.getElementById('file-name').textContent = 'Nessuna foto selezionata';
+    });
     
+    function renderPlayers() {
+        playersList.innerHTML = '';
+        localPlayers.forEach(player => {
+            const div = document.createElement('div');
+            div.className = 'player-item';
+            const skillText = player.skill === 'top_player' ? 'Top Player' : 'Player';
+            div.innerHTML = `<img src="${player.photo || 'https://via.placeholder.com/50'}" alt="${player.name}"><span>${player.name} (${skillText})</span><button class="btn-danger" onclick="deletePlayer('${player.id}')">X</button>`;
+            playersList.appendChild(div);
+        });
+    }
+
+    window.deletePlayer = async (id) => {
+        if (confirm('Eliminare questo giocatore?')) {
+            await db.collection('players').doc(id).delete();
+        }
+    };
+
     // --- SEZIONE SQUADRE ---
-    createTeamsBtn.addEventListener("click",async()=>{const e=localPlayers.filter(e=>"forte"===e.skill),t=localPlayers.filter(e=>"scarso"===e.skill);if(0===e.length||e.length!==t.length)return alert('Numero di "forti" e "scarsi" non valido!');if(confirm("Sei sicuro? Le squadre e le partite esistenti verranno cancellate.")){await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")]),e.sort(()=>.5-Math.random()),t.sort(()=>.5-Math.random());for(let l=0;l<e.length;l++)await db.collection("teams").add({name:`Squadra ${l+1}`,player1:e[l],player2:t[l]})}});
-    window.updateTeamName=async(e,t)=>{await db.collection("teams").doc(e).update({name:t})};
+    createTeamsBtn.addEventListener('click', async () => {
+        const strong = localPlayers.filter(p => p.skill === 'top_player');
+        const weak = localPlayers.filter(p => p.skill === 'player');
+        if (strong.length === 0 || strong.length !== weak.length) {
+            return alert('Numero di "Top Player" e "Player" non valido o è zero!');
+        }
+        if (confirm('Sei sicuro? Le squadre e le partite esistenti verranno cancellate.')) {
+            await Promise.all([deleteCollection('teams'), deleteCollection('roundRobinMatches'), deleteCollection('knockoutMatches')]);
+            strong.sort(() => 0.5 - Math.random());
+            weak.sort(() => 0.5 - Math.random());
+            for (let i = 0; i < strong.length; i++) {
+                await db.collection('teams').add({ name: `Squadra ${i + 1}`, player1: strong[i], player2: weak[i] });
+            }
+        }
+    });
+    
+    function renderTeams() {
+        teamsList.innerHTML = '';
+        localTeams.forEach(team => {
+            const div = document.createElement('div');
+            div.className = 'team-item';
+            div.innerHTML = `<input type="text" class="team-name-input" value="${team.name}" onchange="updateTeamName('${team.id}', this.value)"><span class="team-players">${team.player1.name} & ${team.player2.name}</span>`;
+            teamsList.appendChild(div);
+        });
+    }
+
+    window.updateTeamName = async (id, name) => await db.collection('teams').doc(id).update({ name });
 
     // --- SEZIONE GIRONI ---
-    generateRoundRobinBtn.addEventListener("click",async()=>{if(localTeams.length<2)return alert("Crea almeno 2 squadre!");await deleteCollection("roundRobinMatches");let e=[...localTeams];e.length%2!=0&&e.push({id:"BYE"});for(let t=0;t<e.length;t++)for(let l=t+1;l<e.length;l++)"BYE"!==e[t].id&&"BYE"!==e[l].id&&await db.collection("roundRobinMatches").add({teamA:e[t],teamB:e[l],scoreA:null,scoreB:null});alert("Calendario generato!"),calculateStandingsBtn.style.display="block"});
-    window.updateScore=async(e,t,l)=>{await db.collection("roundRobinMatches").doc(e).update({[("A"===t?"scoreA":"scoreB")]:parseInt(l)||null})};
+    generateRoundRobinBtn.addEventListener('click', async () => {
+        if (localTeams.length < 2) return alert("Crea almeno 2 squadre prima di generare le partite!");
+        
+        await deleteCollection('roundRobinMatches');
+        let teams = [...localTeams];
+        if (teams.length % 2 !== 0) teams.push({ id: 'BYE' });
+        
+        for (let i = 0; i < teams.length; i++) {
+            for (let j = i + 1; j < teams.length; j++) {
+                if (teams[i].id !== 'BYE' && teams[j].id !== 'BYE') {
+                    await db.collection('roundRobinMatches').add({ teamA: teams[i], teamB: teams[j], scoreA: null, scoreB: null });
+                }
+            }
+        }
+        alert('Calendario generato con successo!');
+        calculateStandingsBtn.style.display = 'block';
+    });
 
-    // --- NUOVA SEZIONE FASE FINALE (con logica aggiornata) ---
+    function renderRoundRobinMatches() {
+        roundRobinMatchesDiv.innerHTML = '';
+        localRoundRobinMatches.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'match-item';
+            div.innerHTML = `<span>${m.teamA.name}</span><input type="number" value="${m.scoreA ?? ''}" onchange="updateScore('${m.id}', 'A', this.value)"><span class="vs">vs</span><input type="number" value="${m.scoreB ?? ''}" onchange="updateScore('${m.id}', 'B', this.value)"><span>${m.teamB.name}</span>`;
+            roundRobinMatchesDiv.appendChild(div);
+        });
+    }
+
+    window.updateScore = async (id, team, score) => await db.collection('roundRobinMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
+
+    // --- SEZIONE FASE FINALE ---
     generateKnockoutBtn.addEventListener('click', async () => {
-        const numQualifiers = 4; // Fisso a 4 squadre per le semifinali
-        document.getElementById('num-qualifiers').value = 4; // Aggiorna il campo visivo
+        const numQualifiers = 4;
+        document.getElementById('num-qualifiers').value = 4;
         
         const standings = calculateStandings(localTeams, localRoundRobinMatches);
-        if (standings.length < numQualifiers) return alert(`Non ci sono abbastanza squadre per le semifinali (servono almeno ${numQualifiers}).`);
-        if (!confirm(`Generare le semifinali? Le partite finali esistenti verranno cancellate.`)) return;
+        if (standings.length < numQualifiers) return alert(`Servono almeno ${numQualifiers} squadre per le semifinali.`);
+        if (!confirm(`Generare le semifinali (1ª vs 4ª e 2ª vs 3ª)?`)) return;
         
         await deleteCollection('knockoutMatches');
-        
         const qualified = standings.slice(0, numQualifiers);
         const batch = db.batch();
 
-        // Semifinale 1: 1a vs 4a
         const sf1Ref = db.collection('knockoutMatches').doc();
         batch.set(sf1Ref, { round: 1, matchIndex: 0, teamA: qualified[0], teamB: qualified[3], scoreA: null, scoreB: null, id: sf1Ref.id });
         
-        // Semifinale 2: 2a vs 3a
         const sf2Ref = db.collection('knockoutMatches').doc();
         batch.set(sf2Ref, { round: 1, matchIndex: 1, teamA: qualified[1], teamB: qualified[2], scoreA: null, scoreB: null, id: sf2Ref.id });
 
         await batch.commit();
-        alert('Tabellone delle semifinali generato!');
+        alert('Tabellone semifinali generato!');
     });
     
     window.updateKnockoutScore = async (id, team, score) => {
         await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
     };
     
-    // --- FUNZIONI DI RENDER E CALCOLO ---
-    function renderPlayers(){playersList.innerHTML="";localPlayers.forEach(e=>{const t=document.createElement("div");t.className="player-item",t.innerHTML=`<img src="${e.photo||"https://via.placeholder.com/50"}" alt="${e.name}"><span>${e.name} (${e.skill})</span><button class="btn-danger" onclick="deletePlayer('${e.id}')">X</button>`,playersList.appendChild(t)})}
-    function renderTeams(){teamsList.innerHTML="";localTeams.forEach(t=>{const l=document.createElement("div");l.className="team-item",l.innerHTML=`<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}', this.value)"><span>${t.player1.name} & ${t.player2.name}</span>`,teamsList.appendChild(l)})}
-    function renderRoundRobinMatches(){roundRobinMatchesDiv.innerHTML="";localRoundRobinMatches.forEach(e=>{const t=document.createElement("div");t.className="match-item",t.innerHTML=`<span>${e.teamA.name}</span><input type="number" value="${e.scoreA??""}" onchange="updateScore('${e.id}', 'A', this.value)"><span class="vs">vs</span><input type="number" value="${e.scoreB??""}" onchange="updateScore('${e.id}', 'B', this.value)"><span>${e.teamB.name}</span>`,roundRobinMatchesDiv.appendChild(t)})}
-    
-    // --- NUOVO RENDER PER IL TABELLONE FINALE ---
     function renderKnockoutBracket() {
         knockoutStageDiv.innerHTML = '';
         if (localKnockoutMatches.length === 0) return;
 
-        // Semifinali
         const semifinals = localKnockoutMatches.filter(m => m.round === 1).sort((a,b) => a.matchIndex - b.matchIndex);
         const sf1 = semifinals[0], sf2 = semifinals[1];
         
@@ -123,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sf2) sfHTML += createMatchupHTML(sf2);
         sfHTML += '</div>';
         
-        // Finale
         const winnerSf1 = sf1 && sf1.scoreA !== null && sf1.scoreB !== null ? (sf1.scoreA > sf1.scoreB ? sf1.teamA : sf1.teamB) : null;
         const winnerSf2 = sf2 && sf2.scoreA !== null && sf2.scoreB !== null ? (sf2.scoreA > sf2.scoreB ? sf2.teamA : sf2.teamB) : null;
         
@@ -162,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     }
 
-    // --- NUOVA FUNZIONE DI CALCOLO CLASSIFICA CON SCONTRI DIRETTI ---
+    // --- GESTIONE CLASSIFICHE ---
     function calculateStandings(teams, matches) {
         if (!teams || teams.length === 0) return [];
         const standings = teams.map(t => ({...t, punti: 0, v: 0, p: 0, s: 0, gf: 0, gs: 0, tieBreakerWin: false}));
@@ -192,7 +259,6 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateStandingsBtn.addEventListener("click",()=>renderStandingsTable(calculateStandings(localTeams,localRoundRobinMatches)));
     function renderStandingsTable(e){let t=`<h3>Classifica Completa</h3><table><thead><tr><th>Pos</th><th>Squadra</th><th>Pt</th><th>V</th><th>P</th><th>S</th><th>GF</th><th>GS</th><th>DR</th></tr></thead><tbody>`;e.forEach((e,l)=>{t+=`<tr><td>${l+1}</td><td>${e.name} ${e.tieBreakerWin?'*':''}</td><td>${e.punti}</td><td>${e.v}</td><td>${e.p}</td><td>${e.s}</td><td>${e.gf}</td><td>${e.gs}</td><td>${e.gf-e.gs}</td></tr>`}),standingsTableDiv.innerHTML=t+"</tbody></table>"}
     
-    // --- NUOVA CLASSIFICA LIVE ---
     function updateLiveLeaderboard(standings) {
         const lb = document.getElementById('live-leaderboard'), topList = document.getElementById('top-teams-list'), bottomList = document.getElementById('bottom-teams-list');
         if (standings.length === 0) return lb.style.display = 'none';
