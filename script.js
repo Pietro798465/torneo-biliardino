@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
       measurementId: "G-D142803XG2"
     };
     
+    // Inizializzazione di Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateRandomKnockoutBtn = document.getElementById('generate-random-knockout-btn');
     const knockoutStageDiv = document.getElementById('knockout-stage');
     
+    // Variabili globali
     let localPlayers = [], localTeams = [], localRoundRobinMatches = [], localKnockoutMatches = [];
 
     // --- GESTIONE INIZIALE E AUDIO ---
@@ -80,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localRoundRobinMatches.forEach(m => {
             const div = document.createElement("div");
             div.className = "match-item";
-            div.innerHTML = createMatchupHTML(m, false); // Usa la nuova funzione generica
+            div.innerHTML = createMatchupHTML(m, false);
             roundRobinMatchesDiv.appendChild(div);
         });
     }
@@ -91,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let html = '<div class="knockout-round"><h3>Semifinali</h3>';
         localKnockoutMatches.filter(m => m.round === 1).sort((a,b)=>a.matchIndex-b.matchIndex).forEach(sf => {
-            html += createMatchupHTML(sf, true); // Passa 'true' per indicare che è una partita knockout
+            html += createMatchupHTML(sf, true);
         });
         html += '</div>';
 
@@ -108,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         const finalData = finalMatch ? finalMatch : { teamA: { name: "Da definire", player1: {}, player2: {} }, teamB: { name: "Da definire", player1: {}, player2: {} } };
-        html += createMatchupHTML(finalData, true); // Passa 'true' anche per la finale
+        html += createMatchupHTML(finalData, true);
         html += '</div>';
         
         knockoutStageDiv.innerHTML = html;
@@ -139,9 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="match-row"><div class="team-details">${photoHTML(m.teamB?.player1)}${photoHTML(m.teamB?.player2)}<span>${m.teamB?.name || 'TBD'}</span></div><input type="number" class="score-input ${cB}" value="${sB}" ${id ? `onchange="${updateFn}('${id}','B',this.value)"` : "disabled"}></div>
             </div>`;
 
-        return isKnockout ? `<div class="match-item">${desktopHTML}${mobileHTML}</div>` : desktopHTML + mobileHTML;
+        return desktopHTML + mobileHTML;
     }
-    
+
     // --- LOGICA DI GIOCO ---
     playerForm.addEventListener('submit', async (e) => { e.preventDefault(); const name = document.getElementById('player-name').value; const skill = document.getElementById('player-skill').value; const photoInput = document.getElementById('player-photo'); const photoBase64 = photoInput.files[0] ? await toBase64(photoInput.files[0]) : null; await db.collection('players').add({ name, skill, photo: photoBase64 }); playerForm.reset(); document.getElementById('file-name').textContent = 'Nessuna foto selezionata'; });
     window.deletePlayer = async (id) => { if (confirm('Eliminare questo giocatore?')) await db.collection('players').doc(id).delete(); };
