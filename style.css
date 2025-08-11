@@ -1,8 +1,11 @@
-/* =================================
+/*    const firebaseConfig = {
+      apiKey: "AIzaSyDZMPtTfv9cMIM8 =================================
    STILI GENERALI E LAYOUT
    ================================= */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    fontaznIY4Yggszz0dF-jOo",
+      authDomain: "torneo--family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sanssotto-le-stelle.firebaseapp.com",
+      projectId: "torneo-sotto-le-stelle",-serif;
     background-color: #f0f2f5;
     color: #333;
     margin: 0;
@@ -13,50 +16,69 @@ h1, h2, h3, p {
     color: #1a2a4c;
     text-align: center;
 }
+      storageBucket: "torneo-sotto-le-stelle.appspot.com",
+      messaging
 
 .card {
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
+    box-shadowSenderId: "875733722189",
+      appId: "1:: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin875733722189:web:d48189f50e: 20px auto;
     padding: 20px;
     max-width: 800px;
 }
 
 /* =================================
-   SCHERMATA "CLICCA PER INIZIARE"
+   INTRO E AUDIO
    ================================= */
 #start-screen {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width:42914e056804",
+      measurementId: "G-D142803XG2"
+    };
+    
+    // Inizializzazione di Firebase
+    firebase. 100%;
     height: 100%;
-    background-color: #000;
+    background-color: #000initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // =============================================================================
+    ;
     color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 10001;
     cursor: pointer;
-    font-family: 'Arial Black', Gadget, sans-serif;
+    font// == RIFERIMENTI AGLI ELEMENTI HTML (Definiti tutti qui all'inizio)         ==
+    // =============================================================================
+    const startScreen = document.getElementById('start-screen');
+    const splash-family: 'Arial Black', Gadget, sans-serif;
     font-size: 2em;
     text-align: center;
 }
 
-/* =================================
-   SPLASH SCREEN (CON LOGO)
-   ================================= */
 #splash-screen {
     display: none;
     position: fixed;
-    top: 0;
+Screen = document.getElementById('splash-screen');
+    const logoSound = document.getElementById('logo-sound');    top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: #000;
     justify-content: center;
-    align-items: center;
+
+    const backgroundMusic = document.getElementById('background-music');
+    const leaderboard = document.getElementById('live-leaderboard');
+    const leaderboardToggle = document.getElementById('leaderboard-toggle');
+    const playerForm = document.getElementById('player-form');
+    const playersList = document.getElementById('players-list');
+    const createTeams    align-items: center;
     z-index: 10000;
     animation: splashAnimation 5s forwards;
 }
@@ -71,20 +93,39 @@ h1, h2, h3, p {
     0% { opacity: 0; }
     20% { opacity: 1; }
     80% { opacity: 1; }
-    100% { opacity: 0; visibility: hidden; }
+    100% { opacity: 0; visibility: hiddenBtn = document.getElementById('create-teams-btn');
+    const teamsList = document.getElementById('teams-list');
+    const generateRoundRobinBtn = document.getElementById('generate-round-robin-btn');
+    const roundRobinMatchesDiv = document.getElementById('round-robin-matches');
+    const calculateStandingsBtn = document.getElementById('calculate-standings-btn');
+    const standingsTableDiv = document.getElementById('standings-table');
+    const generateStandardKnockoutBtn = document.getElementById('generate-standard-knockout-btn');
+    const generateRandomKnockoutBtn = document.getElementById('generate-random-knockout-btn');
+; }
 }
 
 /* =================================
-   CLASSIFICA LIVE FISSA
+   CLASSIFICA LIVE
    ================================= */
-#live-leaderboard {
+#live    const knockoutStageDiv = document.getElementById('knockout-stage');
+    
+    // Variabili globali
+    let-leaderboard {
     position: fixed;
     top: 20px;
-    right: 20px;
+    right:  localPlayers = [], localTeams = [], localRoundRobinMatches = [], localKnockoutMatches = [];
+
+    // --- GESTIONE INIZIALE E AUDIO ---
+    startScreen.addEventListener('click', () => {
+        startScreen.style.display = 'none';
+        splashScreen.style.display = 'flex';
+        logoSound?.20px;
     width: 250px;
     background-color: rgba(20, 20, 40, 0.9);
     color: #fff;
-    border-radius: 8px;
+    border-radius:play().catch(e => console.error(e));
+    }, { once: true });
+    logoSound 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     z-index: 1000;
     padding: 10px;
@@ -92,91 +133,284 @@ h1, h2, h3, p {
     backdrop-filter: blur(5px);
 }
 
-#live-leaderboard h4 { text-align: center; margin-top: 0; margin-bottom: 15px; font-size: 16px; color: #ffc107; }
-.leaderboard-section { margin-bottom: 10px; }
-.leaderboard-section h5 { margin: 0 0 5px 0; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 3px; }
-.leaderboard-section.top-teams h5 { color: #4CAF50; }
-.leaderboard-section.bottom-teams h5 { color: #F44336; }
-#live-leaderboard ul { list-style: none; padding: 0; margin: 0; }
-#live-leaderboard li { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
-#live-leaderboard li .team-pos { font-weight: bold; margin-right: 8px; }
-#live-leaderboard li .team-points { font-weight: bold; }
-.tie-breaker-star { color: #ffc107; font-weight: bold; margin-left: 4px; }
+#leader?.addEventListener('ended', () => backgroundMusic?.play().catch(e => console.error(e)));
+    board-toggle {
+    display: none; /* Nascosto su Desktop */
+}
 
-/* =================================
-   STILI TABELLONE ELIMINAZIONE DIRETTA
-   ================================= */
-#knockout-stage { display: block; padding: 20px 0; }
-.knockout-round { text-align: center; margin-bottom: 25px; }
-.knockout-round h3 { text-align: center; margin-bottom: 20px; color: #333; }
-.knockout-matchup { display: flex; justify-content: center; align-items: center; margin: 20px auto; width: 100%; max-width: 750px; }
-.knockout-team { flex: 1; display: flex; align-items: center; padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; height: 40px; }
-.knockout-team.team-a { justify-content: flex-start; border-right: none; border-radius: 6px 0 0 6px; }
-.knockout-team.team-b { justify-content: flex-end; text-align: right; border-left: none; border-radius: 0 6px 6px 0; }
-.team-name-knockout { font-weight: bold; margin: 0 10px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-.knockout-team.team-b .team-name-knockout { flex-direction: row-reverse; }
-.score-knockout { font-size: 1.5em; font-weight: bold; color: #fff; background-color: #343a40; padding: 5px 15px; border-radius: 4px; border: none; width: 40px; }
-.knockout-vs { font-weight: bold; font-size: 1.2em; padding: 0 15px; color: #6c757d; }
-.knockout-team.winner .team-name-knockout { color: #28a745; }
+#live-leadersplashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none');
+    leaderboardToggle?.addEventListenerboard h4 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #ffc107;
+}
+
+.leaderboard-section h5 {
+    margin: 0 0 5px 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255('click', () => leaderboard.classList.toggle('visible'));
+
+    // --- FUNZIONI UTILITY ---
+    const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
+    document, 0.3);
+    padding-bottom: 3px;
+}
+
+.leaderboard-section.getElementById("player-photo").addEventListener("change", e => document.getElementById("file-name").textContent = e.target.files[0]?.name || "Nessuna foto");
+    const photoHTML = p => `<img src="${p?.photo || 'https://via.placeholder.com/50'}" alt="${p?.name || ''.top-teams h5 { color: #4CAF50; }
+.leaderboard-section.bottom-teams h5 { color: #F44336; }
+
+#live-leaderboard ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#}" class="player-photo-icon">`;
+
+    // --- FUNZIONI DI RENDER ---
+    function renderPlayers() {
+        playersList.innerHTML = "";
+        localPlayers.forEach(p => {
+            const divlive-leaderboard li {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 14px;
+}
+
+.tie = document.createElement("div");
+            div.className = "player-item";
+            div.innerHTML = `${-breaker-star {
+    color: #ffc107;
+    font-weight: bold;
+    marginphotoHTML(p)}<span>${p.name} (${p.skill === 'top_player' ? 'Top-left: 4px;
+}
 
 /* =================================
    ELEMENTI DELLE CARD
-   ================================= */
-input[type="text"], input[type="number"], select { width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
-button { background-color: #1877f2; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; display: block; width: 100%; transition: background-color 0.2s; }
-button:hover { background-color: #166fe5; }
-#player-form { display: flex; flex-direction: column; gap: 10px; }
-.file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 5px; box-sizing: border-box; }
-.file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
-.btn-file { background-color: #e9ebee; color: #4b4f56; padding: 8px 15px; border-radius: 4px; border: none; cursor: pointer; width: auto; display: inline-block; }
-#file-name { margin-left: 10px; font-style: italic; color: #666; }
-#players-list-container, #teams-list, #round-robin-matches, #knockout-stage { margin-top: 20px; }
-.player-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
-.player-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
-.player-item span { flex-grow: 1; }
-.player-item .btn-danger { width: 40px; height: 40px; padding: 0; flex-shrink: 0; margin-left: 15px; }
-.team-item { display: flex; align-items: stretch; gap: 10px; margin-bottom: 8px; }
-.team-item .team-name-input { flex: 0 0 25%; font-weight: bold; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
-.team-player-box { flex: 1; display: flex; align-items: center; justify-content: flex-start; gap: 8px; padding-left: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; }
-.player-photo-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; flex-shrink: 0; margin-right: 8px; }
-.match-item { padding: 10px; border-bottom: 1px solid #eee; }
-.match-item .score-input { width: 60px; height: 40px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ccc; border-radius: 4px; }
+   ================================ Player' : 'Player'})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
+            playersList.appendChild(div);
+        });
+    }
+    
+    function renderTeams= */
+input, select, button { font-size: 16px; }
+
+button {
+    background() {
+        teamsList.innerHTML = "";
+        localTeams.forEach(t => {
+            const div = document.createElement("div");
+            div.className = "team-item";
+            div.innerHTML = `<-color: #1877f2;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+button:hover {input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><div class="team-player-box">${photoHTML(t.player1)} ${ background-color: #166fe5; }
+
+.player-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.player-item img {
+    width: 40px;
+t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2.name}</div>`;
+            teamsList.appendChild(div);
+        });
+    }    height: 40px;
+    border-radius: 50%;
+    object-fit:
+    
+    function renderRoundRobinMatches() {
+        roundRobinMatchesDiv.innerHTML = "";
+        localRoundRobin cover;
+    margin-right: 15px;
+}
+
+.player-item span {
+    flex-grow: 1;
+}
+
+.player-item .btn-danger {
+    width: 4Matches.forEach(m => {
+            const div = document.createElement("div");
+            div.className = "0px;
+    height: 40px;
+    padding: 0;
+    flex-shrinkmatch-item";
+            const sA = m.scoreA ?? '', sB = m.scoreB ?? '';: 0;
+    margin-left: 15px;
+}
+
+.team-item {
+
+            let cA = '', cB = '';
+            if (sA !== '' && sB !== '') { if    display: flex;
+    align-items: stretch;
+    gap: 10px;
+     (+sA > +sB) { cA = 'winner'; cB = 'loser'; } else ifmargin-bottom: 8px;
+}
+
+.team-item .team-name-input {
+    flex: 0 0 25%;
+    font-weight: bold;
+    text-align: (+sB > +sA) { cB = 'winner'; cA = 'loser'; } }
+            div.innerHTML = `<div class="match-row"><div class="team-details">${photoHTML(m.team center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.team-player-box {
+    flex: 1;
+    display: flex;
+    align-itemsA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><input type="number" class="score-input ${cA}" value="${sA}" onchange: center;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;="updateScore('${m.id}','A',this.value)"></div><div class="vs-mobile">
+    background-color: #f8f9fa;
+}
+
+.player-photo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB.player1)}${photoHTML(m.teamB.player2)}<span>${m.teamB.name}</span></div><input type="number" class="score-input ${cB}" value="${sB}" onchange="updateScore('${%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+.match-item {
+    padding:m.id}','B',this.value)"></div>`;
+            roundRobinMatchesDiv.appendChild(div); 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.match-
+        });
+    }
+    
+    function renderKnockoutBracket() {
+        knockoutStageDiv.innerHTML =item .score-input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.2em;
+    font- "";
+        if (localKnockoutMatches.length === 0) return;
+        let html = '<div class="knockout-round"><h3>Semifinali</h3>';
+        localKnockoutMatches.filter(m => m.round === 1).sort((a,b)=>a.matchIndex-b.matchIndex).forEachweight: bold;
+    border: 1px solid #ccc;
+    border-radius: 4px(sf => html += createMatchupHTML(sf));
+        html += '</div><div class="knockout-round"><h3>Finale</h3>';
+        const finalMatch = localKnockoutMatches.find(m => m.round === 2) || {teamA: {name: 'Da definire'}, teamB: {name: 'Da defin;
+}
+
 .match-item .score-input.winner { background-color: #28a745; color: white; }
 .match-item .score-input.loser { background-color: #dc3545; color: white; }
-.vs { font-weight: bold; margin: 0 10px; }
 
-/* =================================
-   TABELLA CLASSIFICA
-   ================================= */
-#standings-table table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-#standings-table th, #standings-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-#standings-table th { background-color: #f2f2f2; }
+.knockout-options {
+    display: flex;
+    ire'}};
+        html += createMatchupHTML(finalMatch);
+        html += '</div>';
+        knockoutStageDiv.innerHTML = html;
+    }
 
-/* =================================
-   PANNELLO DI CONTROLLO (ADMIN)
-   ================================= */
-#admin-panel { border-top: 4px solid #F44336; }
-#admin-panel h2, #admin-panel p { color: #333; }
-#admin-panel h2 { color: #F44336; }
-.warning { background-color: #fffbe6; border: 1px solid #ffe58f; padding: 10px; border-radius: 4px; color: #8a6d3b; text-align: center; }
-.admin-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-.btn-danger { background-color: #d9534f; }
-.btn-danger:hover { background-color: #c9302c; }
-.btn-danger-outline { background-color: white; color: #d9534f; border: 2px solid #d9534f; }
-.btn-danger-outline:hover { background-color: #f2dede; }
-.knockout-options { display: flex; gap: 15px; margin-bottom: 20px; }
-.knockout-options button { flex: 1; }
-.btn-secondary { background-color: #6c757d; border-color: #6c757d; }
+    function createMatchupHTML(m) {
+        const sA = m.scoreA ?? '', sB = m.scoreB ?? '';
+        const wA = m.scoreA !== null && sA > sB, wB = m.scoreB !== null && sBgap: 15px;
+    margin-bottom: 20px;
+}
+
+.btn-secondary { background-color: #6c757d; }
 .btn-secondary:hover { background-color: #5a6268; }
 
 /* =================================
    REGOLE RESPONSIVE
    ================================= */
 @media (max-width: 768px) {
-    #live-leaderboard { display: none !important; }
+    #live-leaderboard {
+        position: fixed;
+        top: 0;
+        right: -280px;
+ > sA;
+        return `<div class="match-row"><div class="team-details">${photoHTML(m.        width: 250px;
+        height: 100%;
+        transition: right 0.3s ease-in-out;
+        display: block !important;
+        padding-top: 60pxteamA?.player1)}${photoHTML(m.teamA?.player2)}<span>${m.teamA?.name || 'TBD'}</span></div><input type="number" class="score-input ${wA ? 'winner;
+        box-sizing: border-box;
+    }
+
+    #live-leaderboard.visible { right: 0; }
+
+    #leaderboard-toggle {
+        display: flex;
+        align-items: center' : (wB ? 'loser' : '')}" value="${sA}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','A',this.value)"` : "disabled";
+        justify-content: center;
+        position: absolute;
+        top: 10px;
+        left: -50px;
+        width: 50px;
+        height: 50}></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB?.player1)}${photoHTML(m.teamB?.playerpx;
+        background-color: rgba(20, 20, 40, 0.9);
+        color: #ffc107;
+        font-size: 24px;
+        border2)}<span>${m.teamB?.name || 'TBD'}</span></div><input type="number" class-radius: 10px 0 0 10px;
+        cursor: pointer;
+        ="score-input ${wB ? 'winner' : (wA ? 'loser' : '')}" value="${sB}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','B',this.border-right: none;
+    }
+
     .team-item, .knockout-options { flex-direction: column; }
-    .match-row { display: flex; align-items: center; width: 100%; justify-content: space-between; }
-    .team-details { display: flex; align-items: center; gap: 8px; }
-    .vs-mobile { font-weight: bold; color: #6c757d; padding: 5px 0; text-align: center; }
-    .knockout-matchup { flex-direction: column; width: 100%; gap: 0; }
-                     }
+
+    .match-row {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .team-details {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+value)"` : "disabled"}></div>`;
+    }
+
+    // --- LOGICA DI GIOCO ---
+    playerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('player-name').value;
+        const skill = document.getElementById('player-skill').value;
+        const photoInput = document.getElementById('player-photo');
+        const photoBase64 = photo    }
+
+    .vs-mobile {
+        font-weight: bold;
+        color: #6c757d;
+        padding: 5px 0;
+        text-align: center;
+    }
+
+    .knockout-matchup {
+        width: 100%;
+    }
+}
