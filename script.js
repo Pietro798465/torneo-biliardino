@@ -1,125 +1,68 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // =============================================================================
-    // ==    
-    window.deletePlayer = async (id) => { if (confirm('Eliminare questo giocatore?')) await db.collection('players').doc(id).delete(); };
-    
-    createTeamsBtn.addEventListener("click", async CONFIGURAZIONE FIREBASE (NON MODIFICARE)                                ==
+    // == CONFIGURAZIONE FIREBASE (NON MODIFICARE)                                ==
     // =============================================================================
-    const firebase () => {
-        const strong = localPlayers.filter(p => p.skill === 'top_player');
-        const weak = localPlayers.filter(p => p.skill === 'player');
-        if (strongConfig = {
-      apiKey: "AIzaSyDZMPtTfv9cMIM8aznIY.length !== weak.length || strong.length === 0) {
-            return alert(`Errore: il4Yggszz0dF-jOo",
-      authDomain: "torneo-sotto-le numero di "Top Player" (${strong.length}) e "Player" (${weak.length}) deve essere uguale e maggiore di zero.`);
-        }
-        if (confirm("Sei sicuro? Le squadre e le partite esistenti verr-stelle.firebaseapp.com",
+    const firebaseConfig = {
+      apiKey: "AIzaSyDZMPtTfv9cMIM8aznIY4Yggszz0dF-jOo",
+      authDomain: "torneo-sotto-le-stelle.firebaseapp.com",
       projectId: "torneo-sotto-le-stelle",
       storageBucket: "torneo-sotto-le-stelle.appspot.com",
       messagingSenderId: "875733722189",
-      appId: "1:875733anno cancellate.")) {
-            await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]);
-            strong.sort(() => .5 - Math.random());
-            weak.722189:web:d48189f50e42914e056804",
-      measurementId: "G-D142803XG2sort(() => .5 - Math.random());
-            for (let i = 0; i < strong.length; i++) await db.collection("teams").add({ name: `Squadra ${i + 1}`, player1: strong[i], player2: weak[i] });
-        }
-    });
-    
-    "
+      appId: "1:875733722189:web:d48189f50e42914e056804",
+      measurementId: "G-D142803XG2"
     };
-
+    
     // Inizializzazione di Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     // =============================================================================
-    // == RIFERIMENTI Awindow.updateTeamName = async (id, name) => await db.collection('teams').doc(id).update({ name });
-    
-    generateRoundRobinBtn.addEventListener("click", async () => {
-        if (localTeams.length < 2) return alert("Crea almeno 2 squadre!");
-        await deleteCollection("roundRobinMatches");
-        let teams = [...localTeams];
-        if (teams.length % 2 !== GLI ELEMENTI HTML                                          ==
+    // == RIFERIMENTI AGLI ELEMENTI HTML                                          ==
     // =============================================================================
-    const startScreen = document0) teams.push({ id: "BYE" });
-        for (let i = 0; i.getElementById('start-screen');
+    const startScreen = document.getElementById('start-screen');
     const splashScreen = document.getElementById('splash-screen');
-    const logoSound = < teams.length; i++) for (let j = i + 1; j < teams.length; j document.getElementById('logo-sound');
+    const logoSound = document.getElementById('logo-sound');
     const backgroundMusic = document.getElementById('background-music');
-    const leaderboard =++) if (teams[i].id !== "BYE" && teams[j].id !== "BYE") await db.collection("roundRobinMatches").add({ teamA: teams[i], teamB: teams[j], scoreA: null, scoreB: null });
-        alert("Calendario generato!");
-        document.getElementById('calculate-standings document.getElementById('live-leaderboard');
+    const leaderboard = document.getElementById('live-leaderboard');
     const leaderboardToggle = document.getElementById('leaderboard-toggle');
     const playerForm = document.getElementById('player-form');
-    const playersList = document.getElementById('-btn').style.display = "block";
-    });
-    
-    window.updateScore = async (players-list');
+    const playersList = document.getElementById('players-list');
     const createTeamsBtn = document.getElementById('create-teams-btn');
     const teamsList = document.getElementById('teams-list');
-    const generateRoundRobinBtn = document.getElementById('generate-roundid, team, score) => await db.collection('roundRobinMatches').doc(id).update({ [team ===-robin-btn');
+    const generateRoundRobinBtn = document.getElementById('generate-round-robin-btn');
     const roundRobinMatchesDiv = document.getElementById('round-robin-matches');
     const calculateStandingsBtn = document.getElementById('calculate-standings-btn');
-    const standingsTableDiv 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
-    
-    const generateKn = document.getElementById('standings-table');
-    const generateStandardKnockoutBtn = document.getElementById('generateockoutMatches = async (isRandom) => {
-        const numQualifiers = 4;
-        const standings-standard-knockout-btn');
+    const standingsTableDiv = document.getElementById('standings-table');
+    const generateStandardKnockoutBtn = document.getElementById('generate-standard-knockout-btn');
     const generateRandomKnockoutBtn = document.getElementById('generate-random-knockout-btn');
     const knockoutStageDiv = document.getElementById('knockout-stage');
- = calculateStandings(localTeams, localRoundRobinMatches);
-        if (standings.length < numQualifiers)    
+    
     // Variabili globali
-    let localPlayers = [], localTeams = [], localRoundRobinMatches = [], return alert(`Servono almeno ${numQualifiers} squadre per le semifinali.`);
-        const message = isRandom ? "Generare semifinali con sorteggio CASUALE?" : "Generare semifinali STANDARD (1ªvs4ª, 2 localKnockoutMatches = [];
+    let localPlayers = [], localTeams = [], localRoundRobinMatches = [], localKnockoutMatches = [];
 
     // --- GESTIONE INIZIALE E AUDIO ---
     startScreen.addEventListener('click', () => {
         startScreen.style.display = 'none';
-        splashScreen.ªvs3ª)?";
-        if (!confirm(message)) return;
-        await deleteCollection('knockoutMatches');
-        let qualified = standings.slice(0, numQualifiers);
-        if (isRandom) qualified.sort(() => 0.5 - Math.random());
-        const batch = db.batch();
-        const sfstyle.display = 'flex';
+        splashScreen.style.display = 'flex';
         logoSound?.play().catch(e => console.error(e));
     }, { once: true });
-    logoSound?.addEventListener('ended', () => backgroundMusic?.play().1Ref = db.collection('knockoutMatches').doc();
-        batch.set(sf1Ref, { round: 1, matchIndex: 0, teamA: qualified[0], teamB: qualified[3], scoreA: null, scoreB: null, id: sf1Ref.id });
-        const sf2Ref = db.collection('knockcatch(e => console.error(e)));
+    logoSound?.addEventListener('ended', () => backgroundMusic?.play().catch(e => console.error(e)));
     splashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none');
     leaderboardToggle?.addEventListener('click', () => leaderboard.classList.toggle('visible'));
 
     // --- FUNZIONI UTILITY ---
-    const toBase64 = f => new Promise((res, rej)outMatches').doc();
-        batch.set(sf2Ref, { round: 1, matchIndex: => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res( 1, teamA: qualified[1], teamB: qualified[2], scoreA: null, scoreB: null, id: sf2Ref.id });
-        await batch.commit();
-        alert('Tabelloner.result); r.onerror = rej; });
-    document.getElementById("player-photo").addEventListener("change", e => document.getElementById("file-name").textContent = e.target.files[0]?.name || "Nessuna foto semifinali generato!');
-    };
-    generateStandardKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(false));
-    generateRandomKnockoutBtn.addEventListener('click', () => generateKnock");
-    const photoHTML = p => `<img src="${p?.photo || 'https://via.placeholder.com/outMatches(true));
-    window.updateKnockoutScore = async (id, team, score) =>50'}" alt="${p?.name || ''}" class="player-photo-icon">`;
+    const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
+    document.getElementById("player-photo").addEventListener("change", e => document.getElementById("file-name").textContent = e.target.files[0]?.name || "Nessuna foto");
+    const photoHTML = p => `<img src="${p?.photo || 'https://via.placeholder.com/50'}" alt="${p?.name || ''}" class="player-photo-icon">`;
 
     // --- FUNZIONI DI RENDER ---
     function renderPlayers() {
         playersList.innerHTML = "";
-        local {
-        await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scorePlayers.forEach(p => {
+        localPlayers.forEach(p => {
             const div = document.createElement("div");
-            div.className = "player-A' : 'scoreB']: parseInt(score) || null });
-        // Logica per creare la finale
-        const allMatches = (await db.collection('knockoutMatches').get()).docs.map(d=>d.data());
-        const semifinals = allMatches.filter(m => m.round === 1);
-        if (semifinals.item";
-            div.innerHTML = `${photoHTML(p)}<span>${p.name} (${p.skill === 'top_player' ? 'Top Player' : 'Player'})</span><button class="btn-danger" onclicklength === 2 && semifinals.every(m => m.scoreA !== null && m.scoreB !== null)) {
-            if (!allMatches.some(m => m.round === 2)) {
-                const winner1="deletePlayer('${p.id}')">X</button>`;
+            div.className = "player-item";
+            div.innerHTML = `${photoHTML(p)}<span>${p.name} (${p.skill === 'top_player' ? 'Top Player' : 'Player'})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
             playersList.appendChild(div);
         });
     }
@@ -128,11 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
         teamsList.innerHTML = "";
         localTeams.forEach(t => {
             const div = document.createElement("div");
-            div.className = "team-item = semifinals[0].scoreA > semifinals[0].scoreB ? semifinals[0].teamA : semifinals[0].teamB;
-                const winner2 = semifinals[1].scoreA > semifinals[1].scoreB ? semifinals";
-            div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><div class="team-player-box">${[1].teamA : semifinals[1].teamB;
-                const finalMatchRef = db.collection('knockoutMatches').doc();
-                await finalMatchRef.set({ round: 2, matchIndex: 0,photoHTML(t.player1)} ${t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2.name}</div>`;
+            div.className = "team-item";
+            div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><div class="team-player-box">${photoHTML(t.player1)} ${t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2.name}</div>`;
             teamsList.appendChild(div);
         });
     }
@@ -140,19 +80,59 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderRoundRobinMatches() {
         roundRobinMatchesDiv.innerHTML = "";
         localRoundRobinMatches.forEach(m => {
-            const div = document.createElement("div teamA: winner1, teamB: winner2, scoreA: null, scoreB: null, id: finalMatchRef.id });
-            }
-        }
-    };
-
-    // --- GESTIONE CLASSIFICHE E DATI IN TEMPO REALE ---
-    db.collection("players").onSnapshot(s => { localPlayers = s.docs.map(d => ({id: d.id, ...d.data()})); renderPlayers");
+            const div = document.createElement("div");
             div.className = "match-item";
             const sA = m.scoreA ?? '', sB = m.scoreB ?? '';
             let cA = '', cB = '';
-            if (sA !==(); });
-    db.collection("teams").onSnapshot(s => { localTeams = s.docs.map(d => ({id: d.id, ...d.data()})); renderTeams(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
-    db.collection("roundRobinMatches").onSnapshot '' && sB !== '') { if (+sA > +sB) { cA = 'winner'; cB =(s => { localRoundRobinMatches = s.docs.map(d => ({id: d.id, ...d.data()})); renderRoundRobinMatches(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
-    db.collection("knockoutMatches").onSnapshot(s => { localKnock 'loser'; } else if (+sB > +sA) { cB = 'winner'; cA = 'loser';outMatches = s.docs.map(d => ({id: d.id, ...d.data()})); renderKnockoutBracket(); });
-    // ... (Il resto delle funzioni non cambia)
+            if (sA !== '' && sB !== '') { if (+sA > +sB) { cA = 'winner'; cB = 'loser'; } else if (+sB > +sA) { cB = 'winner'; cA = 'loser'; } }
+            div.innerHTML = `<div class="match-row"><div class="team-details">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><input type="number" class="score-input ${cA}" value="${sA}" onchange="updateScore('${m.id}','A',this.value)"></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB.player1)}${photoHTML(m.teamB.player2)}<span>${m.teamB.name}</span></div><input type="number" class="score-input ${cB}" value="${sB}" onchange="updateScore('${m.id}','B',this.value)"></div>`;
+            roundRobinMatchesDiv.appendChild(div);
+        });
+    }
+    
+    function renderKnockoutBracket() {
+        knockoutStageDiv.innerHTML = "";
+        if (localKnockoutMatches.length === 0) return;
+        let html = '<div class="knockout-round"><h3>Semifinali</h3>';
+        localKnockoutMatches.filter(m => m.round === 1).sort((a,b)=>a.matchIndex-b.matchIndex).forEach(sf => html += createMatchupHTML(sf));
+        html += '</div><div class="knockout-round"><h3>Finale</h3>';
+        const finalMatch = localKnockoutMatches.find(m => m.round === 2) || {teamA: {name: 'Da definire'}, teamB: {name: 'Da definire'}};
+        html += createMatchupHTML(finalMatch);
+        html += '</div>';
+        knockoutStageDiv.innerHTML = html;
+    }
+
+    function createMatchupHTML(m) {
+        const sA = m.scoreA ?? '', sB = m.scoreB ?? '';
+        const wA = m.scoreA !== null && sA > sB, wB = m.scoreB !== null && sB > sA;
+        return `<div class="match-row"><div class="team-details">${photoHTML(m.teamA?.player1)}${photoHTML(m.teamA?.player2)}<span>${m.teamA?.name || 'TBD'}</span></div><input type="number" class="score-input ${wA ? 'winner' : (wB ? 'loser' : '')}" value="${sA}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','A',this.value)"` : "disabled"}></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB?.player1)}${photoHTML(m.teamB?.player2)}<span>${m.teamB?.name || 'TBD'}</span></div><input type="number" class="score-input ${wB ? 'winner' : (wA ? 'loser' : '')}" value="${sB}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','B',this.value)"` : "disabled"}></div>`;
+    }
+
+    // --- LOGICA DI GIOCO ---
+    playerForm.addEventListener('submit', async (e) => { e.preventDefault(); const name = document.getElementById('player-name').value; const skill = document.getElementById('player-skill').value; const photoInput = document.getElementById('player-photo'); const photoBase64 = photoInput.files[0] ? await toBase64(photoInput.files[0]) : null; await db.collection('players').add({ name, skill, photo: photoBase64 }); playerForm.reset(); document.getElementById('file-name').textContent = 'Nessuna foto selezionata'; });
+    window.deletePlayer = async (id) => { if (confirm('Eliminare questo giocatore?')) await db.collection('players').doc(id).delete(); };
+    createTeamsBtn.addEventListener("click", async () => { const strong = localPlayers.filter(p => p.skill === 'top_player'); const weak = localPlayers.filter(p => p.skill === 'player'); if (strong.length !== weak.length || strong.length === 0) return alert(`Errore: il numero di "Top Player" (${strong.length}) e "Player" (${weak.length}) deve essere uguale e maggiore di zero.`); if (confirm("Sei sicuro? Le squadre e le partite esistenti verranno cancellate.")) { await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]); strong.sort(() => .5 - Math.random()); weak.sort(() => .5 - Math.random()); for (let i = 0; i < strong.length; i++) await db.collection("teams").add({ name: `Squadra ${i + 1}`, player1: strong[i], player2: weak[i] }); } });
+    window.updateTeamName = async (id, name) => await db.collection('teams').doc(id).update({ name });
+    generateRoundRobinBtn.addEventListener("click", async () => { if (localTeams.length < 2) return alert("Crea almeno 2 squadre!"); await deleteCollection("roundRobinMatches"); let teams = [...localTeams]; if (teams.length % 2 !== 0) teams.push({ id: "BYE" }); for (let i = 0; i < teams.length; i++) for (let j = i + 1; j < teams.length; j++) if (teams[i].id !== "BYE" && teams[j].id !== "BYE") await db.collection("roundRobinMatches").add({ teamA: teams[i], teamB: teams[j], scoreA: null, scoreB: null }); alert("Calendario generato!"); calculateStandingsBtn.style.display = "block"; });
+    window.updateScore = async (id, team, score) => await db.collection('roundRobinMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
+    const generateKnockoutMatches = async (isRandom) => { const numQualifiers = 4; const standings = calculateStandings(localTeams, localRoundRobinMatches); if (standings.length < numQualifiers) return alert(`Servono almeno ${numQualifiers} squadre.`); const message = isRandom ? "Generare semifinali con sorteggio CASUALE?" : "Generare semifinali STANDARD (1ªvs4ª, 2ªvs3ª)?"; if (!confirm(message)) return; await deleteCollection('knockoutMatches'); let qualified = standings.slice(0, numQualifiers); if (isRandom) qualified.sort(() => 0.5 - Math.random()); const batch = db.batch(); const sf1Ref = db.collection('knockoutMatches').doc(); batch.set(sf1Ref, { round: 1, matchIndex: 0, teamA: qualified[0], teamB: qualified[3], scoreA: null, scoreB: null, id: sf1Ref.id }); const sf2Ref = db.collection('knockoutMatches').doc(); batch.set(sf2Ref, { round: 1, matchIndex: 1, teamA: qualified[1], teamB: qualified[2], scoreA: null, scoreB: null, id: sf2Ref.id }); await batch.commit(); alert('Tabellone generato!'); };
+    generateStandardKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(false));
+    generateRandomKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(true));
+    window.updateKnockoutScore = async (id, team, score) => { await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null }); const allMatches = (await db.collection('knockoutMatches').get()).docs.map(d => d.data()); const semifinals = allMatches.filter(m => m.round === 1); if (semifinals.length === 2 && semifinals.every(m => m.scoreA !== null && m.scoreB !== null)) { if (!allMatches.some(m => m.round === 2)) { const winner1 = semifinals[0].scoreA > semifinals[0].scoreB ? semifinals[0].teamA : semifinals[0].teamB; const winner2 = semifinals[1].scoreA > semifinals[1].scoreB ? semifinals[1].teamA : semifinals[1].teamB; const finalMatchRef = db.collection('knockoutMatches').doc(); await finalMatchRef.set({ round: 2, matchIndex: 0, teamA: winner1, teamB: winner2, scoreA: null, scoreB: null, id: finalMatchRef.id }); } } };
+
+    // --- GESTIONE CLASSIFICHE E DATI IN TEMPO REALE ---
+    function calculateStandings(teams, matches){if(!teams||teams.length===0)return[];const standings=teams.map(t=>({...t,punti:0,v:0,p:0,s:0,gf:0,gs:0,tieBreakerWin:!1}));return matches.forEach(m=>{if(m.scoreA===null||m.scoreB===null)return;const tA=standings.find(t=>t.id===m.teamA.id),tB=standings.find(t=>t.id===m.teamB.id);if(!tA||!tB)return;tA.gf+=m.scoreA,tA.gs+=m.scoreB,tB.gf+=m.scoreB,tB.gs+=m.scoreA;if(m.scoreA>m.scoreB){tA.punti+=3,tA.v++,tB.s++}else if(m.scoreB>m.scoreA){tB.punti+=3,tB.v++,tA.s++}else{tA.punti+=1,tB.punti+=1,tA.p++,tB.p++}}),standings.sort((a,b)=>{if(a.punti!==b.punti)return b.punti-a.punti;const h2h=matches.find(m=>(m.teamA.id===a.id&&m.teamB.id===b.id)||(m.teamA.id===b.id&&m.teamB.id===a.id));if(h2h&&h2h.scoreA!==h2h.scoreB){if((h2h.teamA.id===a.id&&h2h.scoreA>h2h.scoreB)||(h2h.teamB.id===a.id&&h2h.scoreB>h2h.scoreA))return a.tieBreakerWin=!0,-1;return b.tieBreakerWin=!0,1}const gda=a.gf-a.gs,gdb=b.gf-b.gs;return gda!==gdb?gdb-gda:b.gf-a.gf})}
+    calculateStandingsBtn.addEventListener("click",()=>renderStandingsTable(calculateStandings(localTeams,localRoundRobinMatches)));
+    function renderStandingsTable(standings){let html=`<h3>Classifica Completa</h3><table><thead><tr><th>Pos</th><th>Squadra</th><th>Pt</th><th>V</th><th>P</th><th>S</th><th>GF</th><th>GS</th><th>DR</th></tr></thead><tbody>`;standings.forEach((s,i)=>{html+=`<tr><td>${i+1}</td><td>${s.name} ${s.tieBreakerWin?"*":""}</td><td>${s.punti}</td><td>${s.v}</td><td>${s.p}</td><td>${s.s}</td><td>${s.gf}</td><td>${s.gs}</td><td>${s.gf-s.gs}</td></tr>`}),standingsTableDiv.innerHTML=html+"</tbody></table>"}
+    function updateLiveLeaderboard(standings){const lb=document.getElementById("live-leaderboard"),topList=document.getElementById("top-teams-list"),bottomList=document.getElementById("bottom-teams-list");if(standings.length===0)return;lb.style.display="block";topList.innerHTML="",bottomList.innerHTML="";const qz=4;standings.slice(0,qz).forEach((s,i)=>{topList.innerHTML+=`<li><span><span class="team-pos">${i+1}.</span> ${s.name} ${s.tieBreakerWin?'<span class="tie-breaker-star">*</span>':""}</span><span class="team-points">${s.punti} Pt</span></li>`}),standings.slice(qz).forEach((s,i)=>{bottomList.innerHTML+=`<li><span><span class="team-pos">${qz+i+1}.</span> ${s.name}</span><span class="team-points">${s.punti} Pt</span></li>`})}
+    db.collection("players").onSnapshot(s=>{localPlayers=s.docs.map(d=>({id:d.id,...d.data()})),renderPlayers()});
+    db.collection("teams").onSnapshot(s=>{localTeams=s.docs.map(d=>({id:d.id,...d.data()}));renderTeams();updateLiveLeaderboard(calculateStandings(localTeams,localRoundRobinMatches))});
+    db.collection("roundRobinMatches").onSnapshot(s=>{localRoundRobinMatches=s.docs.map(d=>({id:d.id,...d.data()}));renderRoundRobinMatches();updateLiveLeaderboard(calculateStandings(localTeams,localRoundRobinMatches))});
+    db.collection("knockoutMatches").onSnapshot(s=>{localKnockoutMatches=s.docs.map(d=>({id:d.id,...d.data()}));renderKnockoutBracket()});
+
+    // --- PANNELLO ADMIN ---
+    async function deleteCollection(name){const batch=db.batch(),snapshot=await db.collection(name).get();snapshot.docs.forEach(doc=>batch.delete(doc.ref));try{await batch.commit()}catch(e){console.error("Errore eliminazione:",e)}}
+    document.getElementById("reset-teams-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Cancellerà squadre e partite.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
+    document.getElementById("reset-tournament-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Manterrà solo i giocatori.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
+    document.getElementById("reset-all-btn").addEventListener("click",async()=>{confirm("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?")&&await Promise.all([deleteCollection("players"),deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
 });
