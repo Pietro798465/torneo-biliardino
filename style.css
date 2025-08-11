@@ -104,9 +104,9 @@ h1, h2, h3, p {
 .tie-breaker-star { color: #ffc107; font-weight: bold; margin-left: 4px; }
 
 /* =================================
-   STILI TABELLONE ELIMINAZIONE DIRETTA
+   STILI TABELLONE ELIMINAZIONE DIRETTA (Desktop)
    ================================= */
-#knockout-stage { display: block; padding: 20px 0; }
+.knockout-stage { display: block; padding: 20px 0; }
 .knockout-round { text-align: center; margin-bottom: 25px; }
 .knockout-round h3 { text-align: center; margin-bottom: 20px; color: #333; }
 .knockout-matchup { display: flex; justify-content: center; align-items: center; margin: 20px auto; width: 100%; max-width: 750px; }
@@ -141,43 +141,15 @@ button:hover { background-color: #166fe5; }
 .team-player-box { flex: 1; display: flex; align-items: center; justify-content: flex-start; padding-left: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; }
 .player-photo-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; background-color: #fff; flex-shrink: 0; margin-right: 8px; }
 
-/* NUOVO STILE PARTITE GIRONI (Desktop) */
-.match-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-.match-item .team-info {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.match-item .team-info.team-b {
-    justify-content: flex-end;
-}
-.match-item .score-inputs {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    flex: 0 0 180px; /* Larghezza fissa per i punteggi */
-}
-.match-item .score-input {
-    width: 60px;
-    height: 40px;
-    text-align: center;
-    font-size: 1.2em;
-    font-weight: bold;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
+/* Stile Partite Gironi (Desktop) */
+.match-item .score-inputs { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.match-item .score-input { width: 60px; height: 40px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ccc; border-radius: 4px; }
 .match-item .score-input.winner { background-color: #28a745; color: white; border-color: #28a745; }
 .match-item .score-input.loser { background-color: #dc3545; color: white; border-color: #dc3545; }
 .vs { font-weight: bold; }
-/* FINE NUOVO STILE DESKTOP */
+
+/* Strutture usate da JS, nascoste di default */
+.match-row, .vs-mobile { display: none; }
 
 /* =================================
    TABELLA CLASSIFICA
@@ -212,22 +184,17 @@ button:hover { background-color: #166fe5; }
     h2 { font-size: 1.4em; }
     .card { padding: 15px; }
     #live-leaderboard { display: none !important; }
-    .team-item { flex-direction: column; }
-    .team-player-box { justify-content: flex-start; word-break: break-word; }
+    .team-item, .knockout-options { flex-direction: column; }
+    .team-player-box, .player-item span { word-break: break-word; }
     .team-item .team-name-input { flex-basis: auto; }
-    /* Layout Mobile per le partite */
-    .match-item { flex-direction: column; padding: 15px; }
+    
+    /* Layout Mobile per le partite (Gironi E Fase Finale) */
+    .match-item, .knockout-matchup { flex-direction: column; padding: 15px; gap: 5px; }
     .match-row { display: flex; align-items: center; width: 100%; justify-content: space-between; }
     .team-details { display: flex; align-items: center; gap: 8px; }
-    .vs-mobile { font-weight: bold; color: #6c757d; padding: 5px 0; text-align: center; }
-    .match-item .team-info, .match-item .score-inputs { display: none; } /* Nasconde la vista desktop */
-    .knockout-matchup { flex-direction: column; width: 100%; max-width: 100%; gap: 0; }
-    .knockout-team { width: 100%; box-sizing: border-box; justify-content: center !important; }
-    .knockout-team.team-a { border-radius: 6px 6px 0 0; border-bottom: none; }
-    .knockout-team.team-b { border-radius: 0 0 6px 6px; border-top: none; flex-direction: row-reverse; }
-    .team-name-knockout { white-space: normal; }
-    .score-knockout { margin: 5px 0; }
-    .knockout-vs { display: block; padding: 5px 0; }
-    .knockout-options { flex-direction: column; }
-    .player-item span { word-break: break-word; }
+    .vs-mobile { display: block; font-weight: bold; color: #6c757d; padding: 5px 0; text-align: center; }
+
+    /* Nascondi la versione desktop delle partite */
+    .match-item .team-info, .match-item .score-inputs, .knockout-vs { display: none; }
+    .knockout-team { display: none; }
 }
