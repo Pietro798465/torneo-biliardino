@@ -2,38 +2,25 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,; font-size: 14px; }
-.tie-breaker-star { color: #ffc107; font-weight: bold; margin-left: 4px; }
-#leaderboard- initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Torneo di Biliardino</title>
-    toggle { display: none; } /* Nascosto di default, visibile su mobile */
-
-/* =================================<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
     <!-- Firebase Libraries -->
-    <script src="https
-   ELEMENTI DELLE CARD
-   ================================= */
-button { background-color: #1877f://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></2; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; display: block; width: 100%; transition: background-color 0.2s; }
-buttonscript>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<!-- Schermata Iniz:hover { background-color: #166fe5; }
-.player-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-iale -->
+<!-- Schermata Iniziale: visibile al caricamento, scompare al primo click -->
 <div id="start-screen">
     <h2>CLICCA PER INIZIARE</h2>
 </div>
 
-<!-- Classifica Live a Scomparsa -->
+<!-- Classifica Live a Scomparsa (visibile solo su mobile) -->
 <div id="live-leaderboard">
-    <div id="leaderbottom: 1px solid #eee; }
-.player-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
-.player-item span { flex-grow: 1; }
-.player-item .board-toggle">🏆</div>
+    <div id="leaderboard-toggle">🏆</div>
     <h4>🏆 CLASSIFICA LIVE</h4>
-    <div class="leaderboard-btn-danger { width: 40px; height: 40px; padding: 0; flex-shrink: 0; margin-left: 15px; }
-.team-item { display: flex; alignsection top-teams">
+    <div class="leaderboard-section top-teams">
         <h5>ZONA QUALIFICAZIONE</h5>
         <ul id="top-teams-list"></ul>
     </div>
@@ -43,99 +30,81 @@ buttonscript>
     </div>
 </div>
 
-<!-- Splash-items: stretch; gap: 10px; margin-bottom: 8px; }
-.team- Screen con il Logo -->
+<!-- Splash Screen con il Logo (nascosta all'inizio) -->
 <div id="splash-screen">
-    <img src="logo.png" altitem .team-name-input { flex: 0 0 25%; font-weight: bold; text="Logo del Torneo" class="splash-logo">
-    <audio id="logo-sound" src="logo--align: center; border: 1px solid #ccc; border-radius: 4px; }
-sound.mp3"></audio>
+    <img src="logo.png" alt="Logo del Torneo" class="splash-logo">
+    <audio id="logo-sound" src="logo-sound.mp3"></audio>
 </div>
 
-<!-- Player Musica -->
+<!-- Player per la musica di sottofondo (nascosto) -->
 <audio id="background-music" loop>
-    .team-player-box { flex: 1; display: flex; align-items: center; justify-content: flex-start; gap: 8px; padding: 10px; border: 1px<source src="song2.mp3" type="audio/mpeg">
+    <source src="song2.mp3" type="audio/mpeg">
 </audio>
 
 <h1>Gestione Torneo di Biliardino</h1>
 
-<!-- Sezione 1: Giocatori -->
+<!-- Sezione 1: Registrazione Giocatori -->
 <div class="card">
- solid #ccc; border-radius: 4px; background-color: #f8f9fa; }
-.    <h2>1. Registra Giocatori</h2>
+    <h2>1. Registra Giocatori</h2>
     <form id="player-form">
-        <input typeplayer-photo-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; flex-shrink: 0; margin-right: 8px; }
-.match-item { padding: 10px; border-bottom: 1px solid #="text" id="player-name" placeholder="Nome Giocatore" required>
+        <input type="text" id="player-name" placeholder="Nome Giocatore" required>
         <select id="player-skill" required>
             <option value="" disabled selected>Seleziona livello</option>
             <option value="top_player">Top Player</option>
             <option value="player">Player</option>
-        </selecteee; }
-.match-item .score-input { width: 60px; height: 40px; text-align: center; font-size: 1.2em; font-weight: bold; border:>
+        </select>
         <div class="file-input-wrapper">
-            <button type="button" class="btn 1px solid #ccc; border-radius: 4px; }
-.match-item .score--file">Scegli Foto</button>
-            <input type="file" id="player-photo" acceptinput.winner { background-color: #28a745; color: white; }
-.match="image/*">
+            <button type="button" class="btn-file">Scegli Foto</button>
+            <input type="file" id="player-photo" accept="image/*">
             <span id="file-name">Nessuna foto selezionata</span>
-        </div>-item .score-input.loser { background-color: #dc3545; color: white; }
-
+        </div>
         <button type="submit">Aggiungi Giocatore</button>
     </form>
-    <div.knockout-options { display: flex; gap: 15px; margin-bottom: 20px; } id="players-list-container">
+    <div id="players-list-container">
         <h3>Giocatori Registrati</h3>
         <div id="players-list"></div>
     </div>
 </div>
 
-<!-- Sezione 2: Squadre -->
+<!-- Sezione 2: Creazione Squadre -->
 <div class="card">
     <h2>2. Crea le Squadre</h2>
-    <button id="create-teams-btn">Crea Squadre (Top Player +
-.btn-secondary { background-color: #6c757d; }
-.btn-secondary:hover { background-color: #5a6268; }
-.admin-buttons { display: flex; flex-direction: column; gap: 15px; }
-.btn-danger { background-color: # Player)</button>
+    <button id="create-teams-btn">Crea Squadre (Top Player + Player)</button>
     <div id="teams-list"></div>
 </div>
 
-<!-- Sezione 3: Girond9534f; }
-.btn-danger-outline { background-color: white; color: #d9534f; border: 2px solid #d9534f; }
-
-/* =================================
-   REGOLE RESPONSIVE
-   ================================= */
-@media (max-width: 768pxi -->
+<!-- Sezione 3: Fase a Gironi -->
 <div class="card">
     <h2>3. Fase a Gironi</h2>
     <button id="generate-round-robin-btn">Genera Partite Gironi</button>
-    <div id="round) {
-    #live-leaderboard { right: -280px; width: 250px; height: 100%; transition: right 0.3s ease-in-out; display: block !important; padding-top: 60px; box-sizing: border-box; }
-    #live-robin-matches"></div>
+    <div id="round-robin-matches"></div>
     <button id="calculate-standings-btn" style="display:none;">Mostra Classifica Completa</button>
     <div id="standings-table"></div>
 </div>
 
 <!-- Sezione 4: Fase Finale -->
 <div class="card">
-    <h2>4. Fase Finale (Semifinali)</h2>-leaderboard.visible { right: 0; }
-    #leaderboard-toggle { display: flex; align-items: center; justify-content: center; position: absolute; top: 10px; left: -5
+    <h2>4. Fase Finale (Semifinali)</h2>
     <p>Scegli come generare gli accoppiamenti per le semifinali.</p>
     <div class="knockout-options">
-        <button id="generate-standard-knockout-btn0px; width: 50px; height: 50px; background-color: rgba(20, ">Genera Standard (1ª vs 4ª, 2ª vs 3ª)</button>
-        <button id="generate-random-knockout-btn" class="btn-secondary">Genera Casuale</20, 40, 0.9); color: #ffc107; font-size: 24px; border-radius: 10px 0 0 10px; cursor: pointer; border-right: none; }
-    .team-item, .knockout-options, .matchbutton>
+        <button id="generate-standard-knockout-btn">Genera Standard (1ª vs 4ª, 2ª vs 3ª)</button>
+        <button id="generate-random-knockout-btn" class="btn-secondary">Genera Casuale</button>
     </div>
     <div id="knockout-stage"></div>
 </div>
 
 <!-- Pannello Admin -->
 <div class="card" id="admin-panel">
-    <h2>Pannello di Controllo (Admin-item { flex-direction: column; }
-    .match-row { display: flex; align-items: center; width: 100%; justify-content: space-between; }
-    .team-details { display: flex; align-items: center; gap: 8px; }
-    .vs-mobile { font-weight: bold)</h2>
+    <h2>Pannello di Controllo (Admin)</h2>
     <p class="warning"><strong>Attenzione:</strong> Le azioni sono irreversibili.</p>
-    <div; color: #6c757d; padding: 5px 0; text-align: center; }
- class="admin-buttons">
-        <button id="reset-teams-btn" class="btn-danger">Rip    .knockout-matchup { flex-direction: column; width: 100%; gap: 0; }
-}
+    <div class="admin-buttons">
+        <button id="reset-teams-btn" class="btn-danger">Ripeti Sorteggio Squadre</button>
+        <button id="reset-tournament-btn" class="btn-danger">Azzera Torneo (Mantieni Giocatori)</button>
+        <button id="reset-all-btn" class="btn-danger-outline">RESET COMPLETO (CANCELLA TUTTO)</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
