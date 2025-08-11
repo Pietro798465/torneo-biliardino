@@ -16,6 +16,12 @@
     <h2>CLICCA PER INIZIARE</h2>
 </div>
 
+<!-- Classifica Live a Scomparsa (per mobile) -->
+<div id="live-leaderboard">
+    <div id="leaderboard-toggle">🏆</div>
+    <!-- Il contenuto verrà generato da JS -->
+</div>
+
 <!-- Splash Screen con il Logo -->
 <div id="splash-screen">
     <img src="logo.png" alt="Logo del Torneo" class="splash-logo">
@@ -23,9 +29,7 @@
 </div>
 
 <!-- Player Musica -->
-<audio id="background-music" loop>
-    <source src="song2.mp3" type="audio/mpeg">
-</audio>
+<audio id="background-music" loop><source src="song2.mp3" type="audio/mpeg"></audio>
 
 <h1>Gestione Torneo di Biliardino</h1>
 
@@ -39,11 +43,7 @@
             <option value="top_player">Top Player</option>
             <option value="player">Player</option>
         </select>
-        <div class="file-input-wrapper">
-            <button type="button" class="btn-file">Scegli Foto</button>
-            <input type="file" id="player-photo" accept="image/*">
-            <span id="file-name">Nessuna foto selezionata</span>
-        </div>
+        <div class="file-input-wrapper"><button type="button" class="btn-file">Scegli Foto</button><input type="file" id="player-photo" accept="image/*"><span id="file-name">Nessuna foto selezionata</span></div>
         <button type="submit">Aggiungi Giocatore</button>
     </form>
     <div id="players-list-container">
@@ -59,18 +59,13 @@
     <div id="teams-list"></div>
 </div>
 
-<!-- Sezione 3: Gironi -->
+<!-- Sezione 3: Gironi e Classifica -->
 <div class="card">
     <h2>3. Fase a Gironi</h2>
     <button id="generate-round-robin-btn">Genera Partite Gironi</button>
     <div id="round-robin-matches"></div>
-    
-    <!-- NUOVA SEZIONE CLASSIFICA INTEGRATA -->
     <div id="standings-section" style="display:none;">
-        <h3 class="standings-title">CLASSIFICA GIRONI</h3>
-        <div id="standings-display">
-            <!-- La classifica verrà generata qui da JavaScript -->
-        </div>
+        <!-- La nuova classifica apparirà qui -->
     </div>
 </div>
 
