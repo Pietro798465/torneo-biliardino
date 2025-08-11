@@ -1,11 +1,8 @@
-/*    const firebaseConfig = {
-      apiKey: "AIzaSyDZMPtTfv9cMIM8 =================================
+/* =================================
    STILI GENERALI E LAYOUT
    ================================= */
 body {
-    fontaznIY4Yggszz0dF-jOo",
-      authDomain: "torneo--family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sanssotto-le-stelle.firebaseapp.com",
-      projectId: "torneo-sotto-le-stelle",-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #f0f2f5;
     color: #333;
     margin: 0;
@@ -16,18 +13,21 @@ h1, h2, h3, p {
     color: #1a2a4c;
     text-align: center;
 }
-      storageBucket: "torneo-sotto-le-stelle.appspot.com",
-      messaging
 
 .card {
     background-color: white;
     border-radius: 8px;
-    box-shadowSenderId: "875733722189",
-      appId: "1:: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin875733722189:web:d48189f50e: 20px auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
     padding: 20px;
     max-width: 800px;
 }
+
+input, select, button {
+    font-size: 16px;
+    padding: 10px;
+}
+
 
 /* =================================
    INTRO E AUDIO
@@ -36,28 +36,16 @@ h1, h2, h3, p {
     position: fixed;
     top: 0;
     left: 0;
-    width:42914e056804",
-      measurementId: "G-D142803XG2"
-    };
-    
-    // Inizializzazione di Firebase
-    firebase. 100%;
+    width: 100%;
     height: 100%;
-    background-color: #000initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    // =============================================================================
-    ;
+    background-color: #000;
     color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 10001;
     cursor: pointer;
-    font// == RIFERIMENTI AGLI ELEMENTI HTML (Definiti tutti qui all'inizio)         ==
-    // =============================================================================
-    const startScreen = document.getElementById('start-screen');
-    const splash-family: 'Arial Black', Gadget, sans-serif;
+    font-family: 'Arial Black', Gadget, sans-serif;
     font-size: 2em;
     text-align: center;
 }
@@ -65,20 +53,13 @@ h1, h2, h3, p {
 #splash-screen {
     display: none;
     position: fixed;
-Screen = document.getElementById('splash-screen');
-    const logoSound = document.getElementById('logo-sound');    top: 0;
+    top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: #000;
     justify-content: center;
-
-    const backgroundMusic = document.getElementById('background-music');
-    const leaderboard = document.getElementById('live-leaderboard');
-    const leaderboardToggle = document.getElementById('leaderboard-toggle');
-    const playerForm = document.getElementById('player-form');
-    const playersList = document.getElementById('players-list');
-    const createTeams    align-items: center;
+    align-items: center;
     z-index: 10000;
     animation: splashAnimation 5s forwards;
 }
@@ -93,39 +74,20 @@ Screen = document.getElementById('splash-screen');
     0% { opacity: 0; }
     20% { opacity: 1; }
     80% { opacity: 1; }
-    100% { opacity: 0; visibility: hiddenBtn = document.getElementById('create-teams-btn');
-    const teamsList = document.getElementById('teams-list');
-    const generateRoundRobinBtn = document.getElementById('generate-round-robin-btn');
-    const roundRobinMatchesDiv = document.getElementById('round-robin-matches');
-    const calculateStandingsBtn = document.getElementById('calculate-standings-btn');
-    const standingsTableDiv = document.getElementById('standings-table');
-    const generateStandardKnockoutBtn = document.getElementById('generate-standard-knockout-btn');
-    const generateRandomKnockoutBtn = document.getElementById('generate-random-knockout-btn');
-; }
+    100% { opacity: 0; visibility: hidden; }
 }
 
 /* =================================
    CLASSIFICA LIVE
    ================================= */
-#live    const knockoutStageDiv = document.getElementById('knockout-stage');
-    
-    // Variabili globali
-    let-leaderboard {
+#live-leaderboard {
     position: fixed;
     top: 20px;
-    right:  localPlayers = [], localTeams = [], localRoundRobinMatches = [], localKnockoutMatches = [];
-
-    // --- GESTIONE INIZIALE E AUDIO ---
-    startScreen.addEventListener('click', () => {
-        startScreen.style.display = 'none';
-        splashScreen.style.display = 'flex';
-        logoSound?.20px;
+    right: 20px;
     width: 250px;
     background-color: rgba(20, 20, 40, 0.9);
     color: #fff;
-    border-radius:play().catch(e => console.error(e));
-    }, { once: true });
-    logoSound 8px;
+    border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     z-index: 1000;
     padding: 10px;
@@ -133,13 +95,11 @@ Screen = document.getElementById('splash-screen');
     backdrop-filter: blur(5px);
 }
 
-#leader?.addEventListener('ended', () => backgroundMusic?.play().catch(e => console.error(e)));
-    board-toggle {
-    display: none; /* Nascosto su Desktop */
+#leaderboard-toggle {
+    display: none; /* Nascosto di default, visibile solo su mobile */
 }
 
-#live-leadersplashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none');
-    leaderboardToggle?.addEventListenerboard h4 {
+#live-leaderboard h4 {
     text-align: center;
     margin-top: 0;
     margin-bottom: 15px;
@@ -151,16 +111,11 @@ Screen = document.getElementById('splash-screen');
     margin: 0 0 5px 0;
     font-size: 12px;
     text-transform: uppercase;
-    border-bottom: 1px solid rgba(255, 255, 255('click', () => leaderboard.classList.toggle('visible'));
-
-    // --- FUNZIONI UTILITY ---
-    const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
-    document, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     padding-bottom: 3px;
 }
 
-.leaderboard-section.getElementById("player-photo").addEventListener("change", e => document.getElementById("file-name").textContent = e.target.files[0]?.name || "Nessuna foto");
-    const photoHTML = p => `<img src="${p?.photo || 'https://via.placeholder.com/50'}" alt="${p?.name || ''.top-teams h5 { color: #4CAF50; }
+.leaderboard-section.top-teams h5 { color: #4CAF50; }
 .leaderboard-section.bottom-teams h5 { color: #F44336; }
 
 #live-leaderboard ul {
@@ -169,44 +124,24 @@ Screen = document.getElementById('splash-screen');
     margin: 0;
 }
 
-#}" class="player-photo-icon">`;
-
-    // --- FUNZIONI DI RENDER ---
-    function renderPlayers() {
-        playersList.innerHTML = "";
-        localPlayers.forEach(p => {
-            const divlive-leaderboard li {
+#live-leaderboard li {
     display: flex;
     justify-content: space-between;
     padding: 4px 0;
     font-size: 14px;
 }
 
-.tie = document.createElement("div");
-            div.className = "player-item";
-            div.innerHTML = `${-breaker-star {
+.tie-breaker-star {
     color: #ffc107;
     font-weight: bold;
-    marginphotoHTML(p)}<span>${p.name} (${p.skill === 'top_player' ? 'Top-left: 4px;
+    margin-left: 4px;
 }
 
 /* =================================
    ELEMENTI DELLE CARD
-   ================================ Player' : 'Player'})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
-            playersList.appendChild(div);
-        });
-    }
-    
-    function renderTeams= */
-input, select, button { font-size: 16px; }
-
+   ================================= */
 button {
-    background() {
-        teamsList.innerHTML = "";
-        localTeams.forEach(t => {
-            const div = document.createElement("div");
-            div.className = "team-item";
-            div.innerHTML = `<-color: #1877f2;
+    background-color: #1877f2;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -218,7 +153,7 @@ button {
     transition: background-color 0.2s;
 }
 
-button:hover {input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><div class="team-player-box">${photoHTML(t.player1)} ${ background-color: #166fe5; }
+button:hover { background-color: #166fe5; }
 
 .player-item {
     display: flex;
@@ -229,16 +164,9 @@ button:hover {input type="text" class="team-name-input" value="${t.name}" onchan
 
 .player-item img {
     width: 40px;
-t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2.name}</div>`;
-            teamsList.appendChild(div);
-        });
-    }    height: 40px;
+    height: 40px;
     border-radius: 50%;
-    object-fit:
-    
-    function renderRoundRobinMatches() {
-        roundRobinMatchesDiv.innerHTML = "";
-        localRoundRobin cover;
+    object-fit: cover;
     margin-right: 15px;
 }
 
@@ -247,30 +175,24 @@ t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.pl
 }
 
 .player-item .btn-danger {
-    width: 4Matches.forEach(m => {
-            const div = document.createElement("div");
-            div.className = "0px;
+    width: 40px;
     height: 40px;
     padding: 0;
-    flex-shrinkmatch-item";
-            const sA = m.scoreA ?? '', sB = m.scoreB ?? '';: 0;
+    flex-shrink: 0;
     margin-left: 15px;
 }
 
 .team-item {
-
-            let cA = '', cB = '';
-            if (sA !== '' && sB !== '') { if    display: flex;
+    display: flex;
     align-items: stretch;
     gap: 10px;
-     (+sA > +sB) { cA = 'winner'; cB = 'loser'; } else ifmargin-bottom: 8px;
+    margin-bottom: 8px;
 }
 
 .team-item .team-name-input {
     flex: 0 0 25%;
     font-weight: bold;
-    text-align: (+sB > +sA) { cB = 'winner'; cA = 'loser'; } }
-            div.innerHTML = `<div class="match-row"><div class="team-details">${photoHTML(m.team center;
+    text-align: center;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
@@ -278,19 +200,19 @@ t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.pl
 .team-player-box {
     flex: 1;
     display: flex;
-    align-itemsA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><input type="number" class="score-input ${cA}" value="${sA}" onchange: center;
+    align-items: center;
     justify-content: flex-start;
     gap: 8px;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;="updateScore('${m.id}','A',this.value)"></div><div class="vs-mobile">
+    border-radius: 4px;
     background-color: #f8f9fa;
 }
 
 .player-photo-icon {
     width: 40px;
     height: 40px;
-    border-radius: 50vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB.player1)}${photoHTML(m.teamB.player2)}<span>${m.teamB.name}</span></div><input type="number" class="score-input ${cB}" value="${sB}" onchange="updateScore('${%;
+    border-radius: 50%;
     object-fit: cover;
     border: 1px solid #ddd;
     flex-shrink: 0;
@@ -298,29 +220,18 @@ t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.pl
 }
 
 .match-item {
-    padding:m.id}','B',this.value)"></div>`;
-            roundRobinMatchesDiv.appendChild(div); 10px;
+    padding: 10px;
     border-bottom: 1px solid #eee;
 }
 
-.match-
-        });
-    }
-    
-    function renderKnockoutBracket() {
-        knockoutStageDiv.innerHTML =item .score-input {
+.match-item .score-input {
     width: 60px;
     height: 40px;
     text-align: center;
     font-size: 1.2em;
-    font- "";
-        if (localKnockoutMatches.length === 0) return;
-        let html = '<div class="knockout-round"><h3>Semifinali</h3>';
-        localKnockoutMatches.filter(m => m.round === 1).sort((a,b)=>a.matchIndex-b.matchIndex).forEachweight: bold;
+    font-weight: bold;
     border: 1px solid #ccc;
-    border-radius: 4px(sf => html += createMatchupHTML(sf));
-        html += '</div><div class="knockout-round"><h3>Finale</h3>';
-        const finalMatch = localKnockoutMatches.find(m => m.round === 2) || {teamA: {name: 'Da definire'}, teamB: {name: 'Da defin;
+    border-radius: 4px;
 }
 
 .match-item .score-input.winner { background-color: #28a745; color: white; }
@@ -328,20 +239,17 @@ t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.pl
 
 .knockout-options {
     display: flex;
-    ire'}};
-        html += createMatchupHTML(finalMatch);
-        html += '</div>';
-        knockoutStageDiv.innerHTML = html;
-    }
-
-    function createMatchupHTML(m) {
-        const sA = m.scoreA ?? '', sB = m.scoreB ?? '';
-        const wA = m.scoreA !== null && sA > sB, wB = m.scoreB !== null && sBgap: 15px;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
 .btn-secondary { background-color: #6c757d; }
 .btn-secondary:hover { background-color: #5a6268; }
+
+.admin-buttons { display: flex; flex-direction: column; gap: 15px; }
+.btn-danger { background-color: #d9534f; }
+.btn-danger-outline { background-color: white; color: #d9534f; border: 2px solid #d9534f; }
+
 
 /* =================================
    REGOLE RESPONSIVE
@@ -350,36 +258,39 @@ t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.pl
     #live-leaderboard {
         position: fixed;
         top: 0;
-        right: -280px;
- > sA;
-        return `<div class="match-row"><div class="team-details">${photoHTML(m.        width: 250px;
+        right: -280px; /* Nascosta di default */
+        width: 250px;
         height: 100%;
         transition: right 0.3s ease-in-out;
         display: block !important;
-        padding-top: 60pxteamA?.player1)}${photoHTML(m.teamA?.player2)}<span>${m.teamA?.name || 'TBD'}</span></div><input type="number" class="score-input ${wA ? 'winner;
+        padding-top: 60px;
         box-sizing: border-box;
     }
 
-    #live-leaderboard.visible { right: 0; }
+    #live-leaderboard.visible {
+        right: 0; /* Appare quando ha la classe 'visible' */
+    }
 
     #leaderboard-toggle {
         display: flex;
-        align-items: center' : (wB ? 'loser' : '')}" value="${sA}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','A',this.value)"` : "disabled";
+        align-items: center;
         justify-content: center;
         position: absolute;
         top: 10px;
         left: -50px;
         width: 50px;
-        height: 50}></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB?.player1)}${photoHTML(m.teamB?.playerpx;
+        height: 50px;
         background-color: rgba(20, 20, 40, 0.9);
         color: #ffc107;
         font-size: 24px;
-        border2)}<span>${m.teamB?.name || 'TBD'}</span></div><input type="number" class-radius: 10px 0 0 10px;
+        border-radius: 10px 0 0 10px;
         cursor: pointer;
-        ="score-input ${wB ? 'winner' : (wA ? 'loser' : '')}" value="${sB}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','B',this.border-right: none;
+        border-right: none;
     }
-
-    .team-item, .knockout-options { flex-direction: column; }
+    
+    .team-item, .knockout-options, .match-item {
+        flex-direction: column;
+    }
 
     .match-row {
         display: flex;
@@ -392,16 +303,7 @@ t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.pl
         display: flex;
         align-items: center;
         gap: 8px;
-value)"` : "disabled"}></div>`;
     }
-
-    // --- LOGICA DI GIOCO ---
-    playerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('player-name').value;
-        const skill = document.getElementById('player-skill').value;
-        const photoInput = document.getElementById('player-photo');
-        const photoBase64 = photo    }
 
     .vs-mobile {
         font-weight: bold;
