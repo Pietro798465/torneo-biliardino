@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
       measurementId: "G-D142803XG2"
     };
     
-    // Inizializzazione di Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -24,8 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const splashScreen = document.getElementById('splash-screen');
     const logoSound = document.getElementById('logo-sound');
     const backgroundMusic = document.getElementById('background-music');
-    const leaderboard = document.getElementById('live-leaderboard');
-    const leaderboardToggle = document.getElementById('leaderboard-toggle');
     const playerForm = document.getElementById('player-form');
     const playersList = document.getElementById('players-list');
     const createTeamsBtn = document.getElementById('create-teams-btn');
@@ -37,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateRandomKnockoutBtn = document.getElementById('generate-random-knockout-btn');
     const knockoutStageDiv = document.getElementById('knockout-stage');
     
-    // Variabili globali
     let localPlayers = [], localTeams = [], localRoundRobinMatches = [], localKnockoutMatches = [];
 
     // --- GESTIONE INIZIALE E AUDIO ---
@@ -48,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { once: true });
     logoSound?.addEventListener('ended', () => backgroundMusic?.play().catch(e => console.error(e)));
     splashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none');
-    leaderboardToggle?.addEventListener('click', () => leaderboard.classList.toggle('visible'));
 
     // --- FUNZIONI UTILITY ---
     const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
@@ -148,8 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (m.scoreA === null || m.scoreB === null) return;
             const tA = standings.find(t => t.id === m.teamA.id), tB = standings.find(t => t.id === m.teamB.id);
             if (!tA || !tB) return;
-            tA.gf += m.scoreA; tA.gs += m.scoreB;
-            tB.gf += m.scoreB; tB.gs += m.scoreA;
+            tA.gf += +m.scoreA; tA.gs += +m.scoreB;
+            tB.gf += +m.scoreB; tB.gs += +m.scoreA;
             if (+m.scoreA > +m.scoreB) tA.vittorie += 1;
             else if (+m.scoreB > +m.scoreA) tB.vittorie += 1;
         });
@@ -157,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (a.vittorie !== b.vittorie) return b.vittorie - a.vittorie;
             const h2h = matches.find(m => (m.teamA.id === a.id && m.teamB.id === b.id) || (m.teamA.id === b.id && m.teamB.id === a.id));
             if (h2h && h2h.scoreA !== h2h.scoreB) {
-                if ((h2h.teamA.id === a.id && h2h.scoreA > h2h.scoreB) || (h2h.teamB.id === a.id && h2h.scoreB > h2h.scoreA)) { a.tieBreakerWin = true; return -1; }
+                if ((h2h.teamA.id === a.id && +h2h.scoreA > +h2h.scoreB) || (h2h.teamB.id === a.id && +h2h.scoreB > +h2h.scoreA)) { a.tieBreakerWin = true; return -1; }
                 b.tieBreakerWin = true; return 1;
             }
             const gda = a.gf - a.gs, gdb = b.gf - b.gs;
@@ -172,13 +167,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         standingsSection.style.display = 'block';
+        
         let tableHTML = `<h3 class="standings-title">🏆 CLASSIFICA GIRONI 🏆</h3><table class="standings-table"><thead><tr><th>Pos</th><th>Squadra</th><th>Vittorie</th><th>GF</th><th>GS</th><th>DR</th></tr></thead><tbody>`;
         standings.forEach((s, i) => {
             tableHTML += `<tr><td>${i + 1}</td><td>${s.name} ${s.tieBreakerWin ? '<span class="tie-breaker-star">*</span>' : ''}</td><td>${s.vittorie}</td><td>${s.gf}</td><td>${s.gs}</td><td>${s.gf - s.gs}</td></tr>`;
         });
         tableHTML += '</tbody></table>';
+        
         standingsSection.innerHTML = tableHTML;
-        leaderboard.innerHTML = `<div id="leaderboard-toggle">🏆</div>` + tableHTML;
+        leaderboard.innerHTML = `<div id="leaderboard-toggle">🏆</div>` + tableHTML; // Copia la tabella anche nella versione a scomparsa
         leaderboard.querySelector('#leaderboard-toggle').addEventListener('click', () => leaderboard.classList.toggle('visible'));
     }
     
@@ -194,4 +191,3 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("reset-tournament-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Manterrà solo i giocatori.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
     document.getElementById("reset-all-btn").addEventListener("click",async()=>{confirm("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?")&&await Promise.all([deleteCollection("players"),deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
 });
-
