@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const splashScreen = document.getElementById('splash-screen');
     const logoSound = document.getElementById('logo-sound');
     const backgroundMusic = document.getElementById('background-music');
+    const leaderboard = document.getElementById('live-leaderboard');
+    const leaderboardToggle = document.getElementById('leaderboard-toggle');
     const playerForm = document.getElementById('player-form');
     const playersList = document.getElementById('players-list');
     const createTeamsBtn = document.getElementById('create-teams-btn');
@@ -31,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const generateRoundRobinBtn = document.getElementById('generate-round-robin-btn');
     const roundRobinMatchesDiv = document.getElementById('round-robin-matches');
     const standingsSection = document.getElementById('standings-section');
-    const standingsDisplay = document.getElementById('standings-display');
     const generateStandardKnockoutBtn = document.getElementById('generate-standard-knockout-btn');
     const generateRandomKnockoutBtn = document.getElementById('generate-random-knockout-btn');
     const knockoutStageDiv = document.getElementById('knockout-stage');
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { once: true });
     logoSound?.addEventListener('ended', () => backgroundMusic?.play().catch(e => console.error(e)));
     splashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none');
+    leaderboardToggle?.addEventListener('click', () => leaderboard.classList.toggle('visible'));
 
     // --- FUNZIONI UTILITY ---
     const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
@@ -79,28 +81,53 @@ document.addEventListener('DOMContentLoaded', () => {
         localRoundRobinMatches.forEach(m => {
             const div = document.createElement("div");
             div.className = "match-item";
-            const sA = m.scoreA ?? '', sB = m.scoreB ?? '';
-            let cA = '', cB = '';
-            if (sA !== '' && sB !== '') { if (+sA > +sB) { cA = 'winner'; cB = 'loser'; } else if (+sB > +sA) { cB = 'winner'; cA = 'loser'; } }
-            div.innerHTML = `
-                <div class="match-item-desktop">
-                    <div class="team-info team-a">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div>
-                    <div class="score-inputs"><input type="number" class="score-input ${cA}" value="${sA}" onchange="updateScore('${m.id}','A',this.value)"><span class="vs">vs</span><input type="number" class="score-input ${cB}" value="${sB}" onchange="updateScore('${m.id}','B',this.value)"></div>
-                    <div class="team-info team-b"><span>${m.teamB.name}</span>${photoHTML(m.teamB.player2)}${photoHTML(m.teamB.player1)}</div>
-                </div>
-                <div class="match-item-mobile">
-                    <div class="match-row"><div class="team-details">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><input type="number" class="score-input ${cA}" value="${sA}" onchange="updateScore('${m.id}','A',this.value)"></div>
-                    <div class="vs-mobile">vs</div>
-                    <div class="match-row"><div class="team-details">${photoHTML(m.teamB.player1)}${photoHTML(m.teamB.player2)}<span>${m.teamB.name}</span></div><input type="number" class="score-input ${cB}" value="${sB}" onchange="updateScore('${m.id}','B',this.value)"></div>
-                </div>`;
+            div.innerHTML = createMatchupHTML(m, false);
             roundRobinMatchesDiv.appendChild(div);
         });
     }
     
     function renderKnockoutBracket() {
-        // ... (Questa funzione rimane invariata dalla versione stabile precedente)
+        knockoutStageDiv.innerHTML = "";
+        if (localKnockoutMatches.length === 0) return;
+        
+        let html = '<div class="knockout-round"><h3>Semifinali</h3>';
+        localKnockoutMatches.filter(m => m.round === 1).sort((a,b)=>a.matchIndex-b.matchIndex).forEach(sf => {
+            html += createMatchupHTML(sf, true);
+        });
+        html += '</div>';
+
+        const semifinals = localKnockoutMatches.filter(m => m.round === 1);
+        const winner1 = semifinals[0] && semifinals[0].scoreA !== null && semifinals[0].scoreB !== null ? (semifinals[0].scoreA > semifinals[0].scoreB ? semifinals[0].teamA : semifinals[0].teamB) : null;
+        const winner2 = semifinals[1] && semifinals[1].scoreA !== null && semifinals[1].scoreB !== null ? (semifinals[1].scoreA > semifinals[1].scoreB ? semifinals[1].teamA : semifinals[1].teamB) : null;
+        
+        html += '<div class="knockout-round"><h3>Finale</h3>';
+        let finalMatch = localKnockoutMatches.find(m => m.round === 2);
+        
+        if (winner1 && winner2 && !finalMatch) {
+            finalMatch = { round: 2, matchIndex: 0, teamA: winner1, teamB: winner2, scoreA: null, scoreB: null };
+            db.collection("knockoutMatches").add(finalMatch).then(ref => db.collection("knockoutMatches").doc(ref.id).update({ id: ref.id }));
+        }
+        
+        const finalData = finalMatch ? finalMatch : { teamA: { name: "Da definire", player1: {}, player2: {} }, teamB: { name: "Da definire", player1: {}, player2: {} } };
+        html += createMatchupHTML(finalData, true);
+        html += '</div>';
+        
+        knockoutStageDiv.innerHTML = html;
     }
 
+    function createMatchupHTML(m, isKnockout = false) {
+        const id = m.id || "", sA = m.scoreA ?? "", sB = m.scoreB ?? "";
+        const wA = m.scoreA !== null && sA > sB, wB = m.scoreB !== null && sB > sA;
+        const cA = wA ? 'winner' : (wB ? 'loser' : '');
+        const cB = wB ? 'winner' : (wA ? 'loser' : '');
+        const updateFn = isKnockout ? 'updateKnockoutScore' : 'updateScore';
+
+        const desktopHTML = `<div class="match-item-desktop"><div class="team-info team-a">${photoHTML(m.teamA?.player1)}${photoHTML(m.teamA?.player2)}<span>${m.teamA?.name || 'TBD'}</span></div><div class="score-inputs"><input type="number" class="score-input ${cA}" value="${sA}" ${id ? `onchange="${updateFn}('${id}','A',this.value)"` : "disabled"}><span class="vs">vs</span><input type="number" class="score-input ${cB}" value="${sB}" ${id ? `onchange="${updateFn}('${id}','B',this.value)"` : "disabled"}></div><div class="team-info team-b"><span>${m.teamB?.name || 'TBD'}</span>${photoHTML(m.teamB?.player2)}${photoHTML(m.teamB?.player1)}</div></div>`;
+        const mobileHTML = `<div class="match-item-mobile"><div class="match-row"><div class="team-details">${photoHTML(m.teamA?.player1)}${photoHTML(m.teamA?.player2)}<span>${m.teamA?.name || 'TBD'}</span></div><input type="number" class="score-input ${cA}" value="${sA}" ${id ? `onchange="${updateFn}('${id}','A',this.value)"` : "disabled"}></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB?.player1)}${photoHTML(m.teamB?.player2)}<span>${m.teamB?.name || 'TBD'}</span></div><input type="number" class="score-input ${cB}" value="${sB}" ${id ? `onchange="${updateFn}('${id}','B',this.value)"` : "disabled"}></div></div>`;
+        
+        return isKnockout ? `<div class="match-item">${desktopHTML}${mobileHTML}</div>` : desktopHTML + mobileHTML;
+    }
+    
     // --- LOGICA DI GIOCO ---
     playerForm.addEventListener('submit', async (e) => { e.preventDefault(); const name = document.getElementById('player-name').value; const skill = document.getElementById('player-skill').value; const photoInput = document.getElementById('player-photo'); const photoBase64 = photoInput.files[0] ? await toBase64(photoInput.files[0]) : null; await db.collection('players').add({ name, skill, photo: photoBase64 }); playerForm.reset(); document.getElementById('file-name').textContent = 'Nessuna foto selezionata'; });
     window.deletePlayer = async (id) => { if (confirm('Eliminare questo giocatore?')) await db.collection('players').doc(id).delete(); };
@@ -114,7 +141,30 @@ document.addEventListener('DOMContentLoaded', () => {
     window.updateKnockoutScore = async (id, team, score) => { await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null }); };
 
     // --- GESTIONE CLASSIFICHE ---
-    function calculateStandings(teams, matches){if(!teams||teams.length===0)return[];const standings=teams.map(t=>({...t,punti:0,v:0,p:0,s:0,gf:0,gs:0,tieBreakerWin:!1}));return matches.forEach(m=>{if(m.scoreA===null||m.scoreB===null)return;const tA=standings.find(t=>t.id===m.teamA.id),tB=standings.find(t=>t.id===m.teamB.id);if(!tA||!tB)return;tA.gf+=m.scoreA,tA.gs+=m.scoreB,tB.gf+=m.scoreB,tB.gs+=m.scoreA;if(m.scoreA>m.scoreB){tA.punti+=3,tA.v++,tB.s++}else if(m.scoreB>m.scoreA){tB.punti+=3,tB.v++,tA.s++}else{tA.punti+=1,tB.punti+=1,tA.p++,tB.p++}}),standings.sort((a,b)=>{if(a.punti!==b.punti)return b.punti-a.punti;const h2h=matches.find(m=>(m.teamA.id===a.id&&m.teamB.id===b.id)||(m.teamA.id===b.id&&m.teamB.id===a.id));if(h2h&&h2h.scoreA!==h2h.scoreB){if((h2h.teamA.id===a.id&&h2h.scoreA>h2h.scoreB)||(h2h.teamB.id===a.id&&h2h.scoreB>h2h.scoreA))return a.tieBreakerWin=!0,-1;return b.tieBreakerWin=!0,1}const gda=a.gf-a.gs,gdb=b.gf-b.gs;return gda!==gdb?gdb-gda:b.gf-a.gf})}
+    function calculateStandings(teams, matches) {
+        if (!teams || teams.length === 0) return [];
+        const standings = teams.map(t => ({...t, vittorie: 0, gf: 0, gs: 0, tieBreakerWin: false}));
+        matches.forEach(m => {
+            if (m.scoreA === null || m.scoreB === null) return;
+            const tA = standings.find(t => t.id === m.teamA.id), tB = standings.find(t => t.id === m.teamB.id);
+            if (!tA || !tB) return;
+            tA.gf += m.scoreA; tA.gs += m.scoreB;
+            tB.gf += m.scoreB; tB.gs += m.scoreA;
+            if (+m.scoreA > +m.scoreB) tA.vittorie += 1;
+            else if (+m.scoreB > +m.scoreA) tB.vittorie += 1;
+        });
+        return standings.sort((a, b) => {
+            if (a.vittorie !== b.vittorie) return b.vittorie - a.vittorie;
+            const h2h = matches.find(m => (m.teamA.id === a.id && m.teamB.id === b.id) || (m.teamA.id === b.id && m.teamB.id === a.id));
+            if (h2h && h2h.scoreA !== h2h.scoreB) {
+                if ((h2h.teamA.id === a.id && h2h.scoreA > h2h.scoreB) || (h2h.teamB.id === a.id && h2h.scoreB > h2h.scoreA)) { a.tieBreakerWin = true; return -1; }
+                b.tieBreakerWin = true; return 1;
+            }
+            const gda = a.gf - a.gs, gdb = b.gf - b.gs;
+            if (gda !== gdb) return gdb - gda;
+            return b.gf - a.gf;
+        });
+    }
     
     function updateStandingsDisplay(standings) {
         if (standings.length === 0 || localRoundRobinMatches.length === 0) {
@@ -122,21 +172,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         standingsSection.style.display = 'block';
-        let topHtml = '<div class="leaderboard-section top-teams"><h5>ZONA QUALIFICAZIONE</h5><ul>';
-        let bottomHtml = '<div class="leaderboard-section bottom-teams"><h5>ZONA RISCHIO</h5><ul>';
-        const qz = 4;
-        standings.slice(0, qz).forEach((s, i) => { topHtml += `<li><span><span class="team-pos">${i + 1}.</span> ${s.name} ${s.tieBreakerWin ? '<span class="tie-breaker-star">*</span>' : ""}</span><span>${s.punti} Pt</span></li>`; });
-        standings.slice(qz).forEach((s, i) => { bottomHtml += `<li><span><span class="team-pos">${qz + i + 1}.</span> ${s.name}</span><span>${s.punti} Pt</span></li>`; });
-        topHtml += '</ul></div>';
-        bottomHtml += '</ul></div>';
-        standingsDisplay.innerHTML = topHtml + bottomHtml;
+        let tableHTML = `<h3 class="standings-title">🏆 CLASSIFICA GIRONI 🏆</h3><table class="standings-table"><thead><tr><th>Pos</th><th>Squadra</th><th>Vittorie</th><th>GF</th><th>GS</th><th>DR</th></tr></thead><tbody>`;
+        standings.forEach((s, i) => {
+            tableHTML += `<tr><td>${i + 1}</td><td>${s.name} ${s.tieBreakerWin ? '<span class="tie-breaker-star">*</span>' : ''}</td><td>${s.vittorie}</td><td>${s.gf}</td><td>${s.gs}</td><td>${s.gf - s.gs}</td></tr>`;
+        });
+        tableHTML += '</tbody></table>';
+        standingsSection.innerHTML = tableHTML;
+        leaderboard.innerHTML = `<div id="leaderboard-toggle">🏆</div>` + tableHTML;
+        leaderboard.querySelector('#leaderboard-toggle').addEventListener('click', () => leaderboard.classList.toggle('visible'));
     }
     
     // --- GESTIONE DATI IN TEMPO REALE ---
-    db.collection("players").onSnapshot(s=>{localPlayers=s.docs.map(d=>({id:d.id,...d.data()})),renderPlayers()});
-    db.collection("teams").onSnapshot(s=>{localTeams=s.docs.map(d=>({id:d.id,...d.data()}));renderTeams();updateStandingsDisplay(calculateStandings(localTeams,localRoundRobinMatches))});
-    db.collection("roundRobinMatches").onSnapshot(s=>{localRoundRobinMatches=s.docs.map(d=>({id:d.id,...d.data()}));renderRoundRobinMatches();updateStandingsDisplay(calculateStandings(localTeams,localRoundRobinMatches))});
-    db.collection("knockoutMatches").onSnapshot(s=>{localKnockoutMatches=s.docs.map(d=>({id:d.id,...d.data()}));renderKnockoutBracket()});
+    db.collection("players").onSnapshot(s => { localPlayers = s.docs.map(d => ({id: d.id, ...d.data()})); renderPlayers(); });
+    db.collection("teams").onSnapshot(s => { localTeams = s.docs.map(d => ({id: d.id, ...d.data()})); renderTeams(); updateStandingsDisplay(calculateStandings(localTeams, localRoundRobinMatches)); });
+    db.collection("roundRobinMatches").onSnapshot(s => { localRoundRobinMatches = s.docs.map(d => ({id: d.id, ...d.data()})); renderRoundRobinMatches(); updateStandingsDisplay(calculateStandings(localTeams, localRoundRobinMatches)); });
+    db.collection("knockoutMatches").onSnapshot(s => { localKnockoutMatches = s.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.round - b.round || a.matchIndex - b.matchIndex); renderKnockoutBracket(); });
 
     // --- PANNELLO ADMIN ---
     async function deleteCollection(name){const batch=db.batch(),snapshot=await db.collection(name).get();snapshot.docs.forEach(doc=>batch.delete(doc.ref));try{await batch.commit()}catch(e){console.error("Errore eliminazione:",e)}}
@@ -144,3 +194,4 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("reset-tournament-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Manterrà solo i giocatori.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
     document.getElementById("reset-all-btn").addEventListener("click",async()=>{confirm("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?")&&await Promise.all([deleteCollection("players"),deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
 });
+
