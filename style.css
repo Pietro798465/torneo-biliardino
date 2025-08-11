@@ -140,14 +140,44 @@ button:hover { background-color: #166fe5; }
 .team-item .team-name-input { flex: 0 0 25%; font-size: 1.1em; font-weight: bold; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
 .team-player-box { flex: 1; display: flex; align-items: center; justify-content: flex-start; padding-left: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; }
 .player-photo-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; background-color: #fff; flex-shrink: 0; margin-right: 8px; }
-.match-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 8px; }
-.match-item .team-info { flex: 1; display: flex; align-items: center; gap: 8px; }
-.match-item .team-info.team-b { justify-content: flex-end; }
-.match-item .score-inputs { display: flex; align-items: center; justify-content: center; gap: 10px; }
-.match-item .score-input { width: 60px; height: 40px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ccc; border-radius: 4px; }
+
+/* NUOVO STILE PARTITE GIRONI (Desktop) */
+.match-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+.match-item .team-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.match-item .team-info.team-b {
+    justify-content: flex-end;
+}
+.match-item .score-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex: 0 0 180px; /* Larghezza fissa per i punteggi */
+}
+.match-item .score-input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 .match-item .score-input.winner { background-color: #28a745; color: white; border-color: #28a745; }
 .match-item .score-input.loser { background-color: #dc3545; color: white; border-color: #dc3545; }
-.vs { font-weight: bold; margin: 0 10px; }
+.vs { font-weight: bold; }
+/* FINE NUOVO STILE DESKTOP */
 
 /* =================================
    TABELLA CLASSIFICA
@@ -185,12 +215,12 @@ button:hover { background-color: #166fe5; }
     .team-item { flex-direction: column; }
     .team-player-box { justify-content: flex-start; word-break: break-word; }
     .team-item .team-name-input { flex-basis: auto; }
-    .match-item { flex-direction: column; padding: 15px; position: relative; }
-    .match-item .score-inputs { order: -1; width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; }
-    .match-item .team-info { display: none; }
+    /* Layout Mobile per le partite */
+    .match-item { flex-direction: column; padding: 15px; }
     .match-row { display: flex; align-items: center; width: 100%; justify-content: space-between; }
     .team-details { display: flex; align-items: center; gap: 8px; }
     .vs-mobile { font-weight: bold; color: #6c757d; padding: 5px 0; text-align: center; }
+    .match-item .team-info, .match-item .score-inputs { display: none; } /* Nasconde la vista desktop */
     .knockout-matchup { flex-direction: column; width: 100%; max-width: 100%; gap: 0; }
     .knockout-team { width: 100%; box-sizing: border-box; justify-content: center !important; }
     .knockout-team.team-a { border-radius: 6px 6px 0 0; border-bottom: none; }
