@@ -78,37 +78,28 @@ input, select, button {
 }
 
 /* =================================
-   CLASSIFICA LIVE
+   NUOVA CLASSIFICA INTEGRATA
    ================================= */
-#live-leaderboard {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 250px;
+#standings-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.standings-title {
+    color: #1a2a4c;
+}
+
+#standings-display {
     background-color: rgba(20, 20, 40, 0.9);
     color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    z-index: 1000;
-    padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-}
-
-#leaderboard-toggle {
-    display: none; /* Nascosto di default, visibile solo su mobile */
-}
-
-#live-leaderboard h4 {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 16px;
-    color: #ffc107;
+    padding: 15px;
+    margin-top: 15px;
 }
 
 .leaderboard-section h5 {
-    margin: 0 0 5px 0;
+    margin: 10px 0 5px 0;
     font-size: 12px;
     text-transform: uppercase;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
@@ -118,17 +109,22 @@ input, select, button {
 .leaderboard-section.top-teams h5 { color: #4CAF50; }
 .leaderboard-section.bottom-teams h5 { color: #F44336; }
 
-#live-leaderboard ul {
+#standings-display ul {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-#live-leaderboard li {
+#standings-display li {
     display: flex;
     justify-content: space-between;
-    padding: 4px 0;
-    font-size: 14px;
+    padding: 8px 5px;
+    font-size: 16px;
+    border-bottom: 1px solid #444;
+}
+
+#standings-display li:last-child {
+    border-bottom: none;
 }
 
 .tie-breaker-star {
@@ -282,70 +278,33 @@ button:hover { background-color: #166fe5; }
    REGOLE RESPONSIVE
    ================================= */
 @media (max-width: 768px) {
-    #live-leaderboard {
-        position: fixed;
-        top: 0;
-        right: -280px;
-        width: 250px;
-        height: 100%;
-        transition: right 0.3s ease-in-out;
-        display: block !important;
-        padding-top: 60px;
-        box-sizing: border-box;
-    }
-
-    #live-leaderboard.visible { right: 0; }
-
-    #leaderboard-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        top: 10px;
-        left: -50px;
-        width: 50px;
-        height: 50px;
-        background-color: rgba(20, 20, 40, 0.9);
-        color: #ffc107;
-        font-size: 24px;
-        border-radius: 10px 0 0 10px;
-        cursor: pointer;
-        border-right: none;
-    }
-    
     .team-item, .knockout-options {
         flex-direction: column;
     }
-    
     .match-item-desktop {
-        display: none; /* Nascondi layout desktop */
+        display: none;
     }
     .match-item-mobile {
-        display: block; /* Mostra layout mobile */
+        display: block;
     }
-
     .match-row {
         display: flex;
         align-items: center;
         width: 100%;
         justify-content: space-between;
     }
-    
     .team-details {
         display: flex;
         align-items: center;
         gap: 8px;
     }
-
     .vs-mobile {
         font-weight: bold;
         color: #6c757d;
         padding: 5px 0;
         text-align: center;
     }
-
     .knockout-matchup {
         width: 100%;
     }
 }
-
