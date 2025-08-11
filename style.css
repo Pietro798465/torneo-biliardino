@@ -1,23 +1,182 @@
 /* =================================
    STILI GENERALI E LAYOUT
    ================================= */
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; color: #333; margin: 0; padding: 20px; }
-h1, h2, h3, p { color: #1a2a4c; text-align: center; }
-.card { background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin: 20px auto; padding: 20px; max-width: 800px; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+h1, h2, h3, p {
+    color: #1a2a4c;
+    text-align: center;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 800px;
+}
 
 /* =================================
    SCHERMATA "CLICCA PER INIZIARE"
    ================================= */
-#start-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; z-index: 10001; cursor: pointer; font-family: 'Arial Black', Gadget, sans-serif; font-size: 2em; text-align: center; }
+#start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10001;
+    cursor: pointer;
+    font-family: 'Arial Black', Gadget, sans-serif;
+    font-size: 2em;
+    text-align: center;
+}
 
 /* =================================
    SPLASH SCREEN (CON LOGO)
    ================================= */
-#splash-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; justify-content: center; align-items: center; z-index: 10000; animation: splashAnimation 5s forwards; }
-.splash-logo { max-width: 80%; max-height: 80%; width: 500px; }
-@keyframes splashAnimation { 0% { opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+#splash-screen {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: splashAnimation 5s forwards;
+}
+
+.splash-logo {
+    max-width: 80%;
+    max-height: 80%;
+    width: 500px;
+}
+
+@keyframes splashAnimation {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+}
 
 /* =================================
    CLASSIFICA LIVE FISSA
    ================================= */
-#live-leaderboard { position: fixed; top: 20px; right: 20px; width: 250px; background-color: rgba(20, 20, 40, 0.9); color: #fff; border-radius: 8px;
+#live-leaderboard {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 250px;
+    background-color: rgba(20, 20, 40, 0.9);
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+#live-leaderboard h4 { text-align: center; margin-top: 0; margin-bottom: 15px; font-size: 16px; color: #ffc107; }
+.leaderboard-section { margin-bottom: 10px; }
+.leaderboard-section h5 { margin: 0 0 5px 0; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 3px; }
+.leaderboard-section.top-teams h5 { color: #4CAF50; }
+.leaderboard-section.bottom-teams h5 { color: #F44336; }
+#live-leaderboard ul { list-style: none; padding: 0; margin: 0; }
+#live-leaderboard li { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+#live-leaderboard li .team-pos { font-weight: bold; margin-right: 8px; }
+#live-leaderboard li .team-points { font-weight: bold; }
+.tie-breaker-star { color: #ffc107; font-weight: bold; margin-left: 4px; }
+
+/* =================================
+   STILI TABELLONE ELIMINAZIONE DIRETTA
+   ================================= */
+#knockout-stage { display: block; padding: 20px 0; }
+.knockout-round { text-align: center; margin-bottom: 25px; }
+.knockout-round h3 { text-align: center; margin-bottom: 20px; color: #333; }
+.knockout-matchup { display: flex; justify-content: center; align-items: center; margin: 20px auto; width: 100%; max-width: 750px; }
+.knockout-team { flex: 1; display: flex; align-items: center; padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; height: 40px; }
+.knockout-team.team-a { justify-content: flex-start; border-right: none; border-radius: 6px 0 0 6px; }
+.knockout-team.team-b { justify-content: flex-end; text-align: right; border-left: none; border-radius: 0 6px 6px 0; }
+.team-name-knockout { font-weight: bold; margin: 0 10px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.knockout-team.team-b .team-name-knockout { flex-direction: row-reverse; }
+.score-knockout { font-size: 1.5em; font-weight: bold; color: #fff; background-color: #343a40; padding: 5px 15px; border-radius: 4px; border: none; width: 40px; }
+.knockout-vs { font-weight: bold; font-size: 1.2em; padding: 0 15px; color: #6c757d; }
+.knockout-team.winner .team-name-knockout { color: #28a745; }
+
+/* =================================
+   ELEMENTI DELLE CARD
+   ================================= */
+input[type="text"], input[type="number"], select { width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+button { background-color: #1877f2; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; display: block; width: 100%; transition: background-color 0.2s; }
+button:hover { background-color: #166fe5; }
+#player-form { display: flex; flex-direction: column; gap: 10px; }
+.file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 5px; box-sizing: border-box; }
+.file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+.btn-file { background-color: #e9ebee; color: #4b4f56; padding: 8px 15px; border-radius: 4px; border: none; cursor: pointer; width: auto; display: inline-block; }
+#file-name { margin-left: 10px; font-style: italic; color: #666; }
+#players-list-container, #teams-list, #round-robin-matches, #knockout-stage { margin-top: 20px; }
+.player-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+.player-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
+.player-item span { flex-grow: 1; }
+.player-item .btn-danger { width: 40px; height: 40px; padding: 0; flex-shrink: 0; margin-left: 15px; }
+.team-item { display: flex; align-items: stretch; gap: 10px; margin-bottom: 8px; }
+.team-item .team-name-input { flex: 0 0 25%; font-weight: bold; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+.team-player-box { flex: 1; display: flex; align-items: center; justify-content: flex-start; gap: 8px; padding-left: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; }
+.player-photo-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; flex-shrink: 0; margin-right: 8px; }
+.match-item { padding: 10px; border-bottom: 1px solid #eee; }
+.match-item .score-input { width: 60px; height: 40px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ccc; border-radius: 4px; }
+.match-item .score-input.winner { background-color: #28a745; color: white; }
+.match-item .score-input.loser { background-color: #dc3545; color: white; }
+.vs { font-weight: bold; margin: 0 10px; }
+
+/* =================================
+   TABELLA CLASSIFICA
+   ================================= */
+#standings-table table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+#standings-table th, #standings-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+#standings-table th { background-color: #f2f2f2; }
+
+/* =================================
+   PANNELLO DI CONTROLLO (ADMIN)
+   ================================= */
+#admin-panel { border-top: 4px solid #F44336; }
+#admin-panel h2, #admin-panel p { color: #333; }
+#admin-panel h2 { color: #F44336; }
+.warning { background-color: #fffbe6; border: 1px solid #ffe58f; padding: 10px; border-radius: 4px; color: #8a6d3b; text-align: center; }
+.admin-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+.btn-danger { background-color: #d9534f; }
+.btn-danger:hover { background-color: #c9302c; }
+.btn-danger-outline { background-color: white; color: #d9534f; border: 2px solid #d9534f; }
+.btn-danger-outline:hover { background-color: #f2dede; }
+.knockout-options { display: flex; gap: 15px; margin-bottom: 20px; }
+.knockout-options button { flex: 1; }
+.btn-secondary { background-color: #6c757d; border-color: #6c757d; }
+.btn-secondary:hover { background-color: #5a6268; }
+
+/* =================================
+   REGOLE RESPONSIVE
+   ================================= */
+@media (max-width: 768px) {
+    #live-leaderboard { display: none !important; }
+    .team-item, .knockout-options { flex-direction: column; }
+    .match-row { display: flex; align-items: center; width: 100%; justify-content: space-between; }
+    .team-details { display: flex; align-items: center; gap: 8px; }
+    .vs-mobile { font-weight: bold; color: #6c757d; padding: 5px 0; text-align: center; }
+    .knockout-matchup { flex-direction: column; width: 100%; gap: 0; }
+                     }
