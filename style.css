@@ -136,17 +136,57 @@ button:hover { background-color: #166fe5; }
 .player-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
 .player-item span { flex-grow: 1; }
 .player-item .btn-danger { width: 40px; height: 40px; padding: 0; flex-shrink: 0; margin-left: 15px; }
+
+/* NUOVO LAYOUT PARTITE GIRONI (Desktop) */
+.match-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.match-item .team-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.match-item .team-info.team-b {
+    justify-content: flex-end;
+}
+.match-item .score-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.match-item .score-input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.match-item .score-input.winner {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+.match-item .score-input.loser {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+/* FINE NUOVO LAYOUT */
+
 .team-item { display: flex; align-items: stretch; gap: 10px; margin-bottom: 8px; }
 .team-item .team-name-input { flex: 0 0 25%; font-size: 1.1em; font-weight: bold; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
 .team-player-box { flex: 1; display: flex; align-items: center; justify-content: flex-start; padding-left: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #f8f9fa; }
 .player-photo-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; background-color: #fff; flex-shrink: 0; margin-right: 8px; }
-.match-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 8px; }
-.match-item .team-info { flex: 1; display: flex; align-items: center; gap: 8px; }
-.match-item .team-info.team-b { justify-content: flex-end; }
-.match-item .score-inputs { display: flex; align-items: center; justify-content: center; gap: 10px; }
-.match-item .score-input { width: 60px; height: 40px; text-align: center; font-size: 1.2em; font-weight: bold; border: 1px solid #ccc; border-radius: 4px; }
-.match-item .score-input.winner { background-color: #28a745; color: white; border-color: #28a745; }
-.match-item .score-input.loser { background-color: #dc3545; color: white; border-color: #dc3545; }
 .vs { font-weight: bold; margin: 0 10px; }
 
 /* =================================
@@ -174,7 +214,7 @@ button:hover { background-color: #166fe5; }
 .btn-secondary:hover { background-color: #5a6268; }
 
 /* =================================
-   REGOLE PER DISPOSITIVI MOBILI (Responsive Design)
+   REGOLE PER DISPOSITIVI MOBILI
    ================================= */
 @media (max-width: 768px) {
     body { padding: 10px; -webkit-text-size-adjust: 100%; }
