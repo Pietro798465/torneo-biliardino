@@ -294,9 +294,7 @@ button:hover { background-color: #166fe5; }
         box-sizing: border-box;
     }
 
-    #live-leaderboard.visible {
-        right: 0;
-    }
+    #live-leaderboard.visible { right: 0; }
 
     #leaderboard-toggle {
         display: flex;
@@ -320,10 +318,10 @@ button:hover { background-color: #166fe5; }
     }
     
     .match-item-desktop {
-        display: none;
+        display: none; /* Nascondi layout desktop */
     }
     .match-item-mobile {
-        display: block;
+        display: block; /* Mostra layout mobile */
     }
 
     .match-row {
@@ -350,3 +348,4 @@ button:hover { background-color: #166fe5; }
         width: 100%;
     }
 }
+
