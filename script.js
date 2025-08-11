@@ -82,7 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
         localRoundRobinMatches.forEach(m => {
             const div = document.createElement("div");
             div.className = "match-item";
-            const sA=m.scoreA??'',sB=m.scoreB??'';let cA='',cB='';if(sA!==''&&sB!==''){if(+sA>+sB){cA='winner';cB='loser'}else if(+sB>+sA){cB='winner';cA='loser'}}
+            const sA = m.scoreA ?? '', sB = m.scoreB ?? '';
+            let cA = '', cB = '';
+            if (sA !== '' && sB !== '') { if (+sA > +sB) { cA = 'winner'; cB = 'loser'; } else if (+sB > +sA) { cB = 'winner'; cA = 'loser'; } }
             div.innerHTML = `<div class="match-row"><div class="team-details">${photoHTML(m.teamA.player1)}${photoHTML(m.teamA.player2)}<span>${m.teamA.name}</span></div><input type="number" class="score-input ${cA}" value="${sA}" onchange="updateScore('${m.id}','A',this.value)"></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB.player1)}${photoHTML(m.teamB.player2)}<span>${m.teamB.name}</span></div><input type="number" class="score-input ${cB}" value="${sB}" onchange="updateScore('${m.id}','B',this.value)"></div>`;
             roundRobinMatchesDiv.appendChild(div);
         });
@@ -94,14 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let html = '<div class="knockout-round"><h3>Semifinali</h3>';
         localKnockoutMatches.filter(m => m.round === 1).forEach(sf => html += createMatchupHTML(sf));
         html += '</div><div class="knockout-round"><h3>Finale</h3>';
-        html += createMatchupHTML(localKnockoutMatches.find(m => m.round === 2) || {teamA: {name: 'Da definire'}, teamB: {name: 'Da definire'}});
+        const finalMatch = localKnockoutMatches.find(m => m.round === 2) || {teamA: {name: 'Da definire'}, teamB: {name: 'Da definire'}};
+        html += createMatchupHTML(finalMatch);
         html += '</div>';
         knockoutStageDiv.innerHTML = html;
     }
 
     function createMatchupHTML(m) {
-        const sA=m.scoreA??'',sB=m.scoreB??'',wA=m.scoreA!==null&&sA>sB,wB=m.scoreB!==null&&sB>sA;
-        return `<div class="match-row"><div class="team-details">${photoHTML(m.teamA?.player1)}${photoHTML(m.teamA?.player2)}<span>${m.teamA?.name || 'TBD'}</span></div><input type="number" class="score-input ${wA?'winner':(wB?'loser':'')}" value="${sA}" ${m.id?`onchange="updateKnockoutScore('${m.id}','A',this.value)"`:"disabled"}></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB?.player1)}${photoHTML(m.teamB?.player2)}<span>${m.teamB?.name || 'TBD'}</span></div><input type="number" class="score-input ${wB?'winner':(wA?'loser':'')}" value="${sB}" ${m.id?`onchange="updateKnockoutScore('${m.id}','B',this.value)"`:"disabled"}></div>`;
+        const sA = m.scoreA ?? '', sB = m.scoreB ?? '';
+        const wA = m.scoreA !== null && sA > sB, wB = m.scoreB !== null && sB > sA;
+        return `<div class="match-row"><div class="team-details">${photoHTML(m.teamA?.player1)}${photoHTML(m.teamA?.player2)}<span>${m.teamA?.name || 'TBD'}</span></div><input type="number" class="score-input ${wA ? 'winner' : (wB ? 'loser' : '')}" value="${sA}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','A',this.value)"` : "disabled"}></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB?.player1)}${photoHTML(m.teamB?.player2)}<span>${m.teamB?.name || 'TBD'}</span></div><input type="number" class="score-input ${wB ? 'winner' : (wA ? 'loser' : '')}" value="${sB}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','B',this.value)"` : "disabled"}></div>`;
     }
 
     // --- GESTIONE CLASSIFICHE ---
@@ -112,8 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (m.scoreA === null || m.scoreB === null) return;
             const tA = standings.find(t => t.id === m.teamA.id), tB = standings.find(t => t.id === m.teamB.id);
             if (!tA || !tB) return;
-            tA.gf += m.scoreA; tA.gs += m.scoreB;
-            tB.gf += m.scoreB; tB.gs += m.scoreA;
+            tA.gf += m.scoreA; tA.gs += m.scoreB; tB.gf += m.scoreB; tB.gs += m.scoreA;
             if (m.scoreA > m.scoreB) { tA.punti += 3; tA.v++; tB.s++; }
             else if (m.scoreB > m.scoreA) { tB.punti += 3; tB.v++; tA.s++; }
             else { tA.punti += 1; tB.punti += 1; tA.p++; tB.p++; }
@@ -155,8 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- AZIONI PRINCIPALI DEI PULSANTI ---
-    playerForm.addEventListener('submit', async (e) => { e.preventDefault(); /*...*/ });
+    // --- LISTENER E OPERAZIONI SUI PULSANTI ---
+    playerForm.addEventListener('submit', async (e) => { e.preventDefault(); /*...*/ }); // Già definita sopra
     window.deletePlayer = async (id) => { /*...*/ };
     createTeamsBtn.addEventListener("click", async () => { /*...*/ });
     window.updateTeamName = async (id, name) => { /*...*/ };
