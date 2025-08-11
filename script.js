@@ -223,4 +223,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- GESTIONE DATI IN TEMPO REALE ---
     db.collection("players").onSnapshot(s => { localPlayers = s.docs.map(d => ({id: d.id, ...d.data()})); renderPlayers(); });
-    db.collection("teams").onSnapshot(s => { localTeams = s.docs.map(d => ({id: d.id, ...d.data()})); renderTeams(); updateLiveLeaderboard(calculate
+    db.collection("teams").onSnapshot(s => { localTeams = s.docs.map(d => ({id: d.id, ...d.data()})); renderTeams(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
+    db.collection("roundRobinMatches").onSnapshot(s => { localRoundRobinMatches = s.docs.map(d => ({id: d.id, ...d.data()})); renderRoundRobinMatches(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
+    db.collection("knockoutMatches").onSnapshot(s => { localKnockoutMatches = s.docs.map(d => ({id: d.id, ...d.data()})); renderKnockoutBracket(); });
+
+    // --- PANNELLO ADMIN ---
+    async function deleteCollection(name) {
+        const batch = db.batch();
+        const snapshot = await db.collection(name).get();
+        snapshot.docs.forEach(doc => batch.delete(doc.ref));
+        try { await batch.commit(); } catch (e) { console.error("Errore eliminazione:", e); }
+    }
+    document.getElementById("reset-teams-btn").addEventListener("click", async () => { if (confirm("Sei sicuro? Cancellerà squadre e partite.")) await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]) });
+    document.getElementById("reset-tournament-btn").addEventListener("click", async () => { if (confirm("Sei sicuro? Manterrà solo i giocatori.")) await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]) });
+    document.getElementById("reset-all-btn").addEventListener("click", async () => { if (confirm("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?")) await Promise.all([deleteCollection("players"), deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]) });
+});
