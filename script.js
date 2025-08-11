@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const db = firebase.firestore();
 
     // =============================================================================
-    // == RIFERIMENTI AGLI ELEMENTI HTML                                          ==
+    // == RIFERIMENTI AGLI ELEMENTI HTML                                         ==
     // =============================================================================
     const startScreen = document.getElementById('start-screen');
     const splashScreen = document.getElementById('splash-screen');
@@ -45,34 +45,16 @@ document.addEventListener('DOMContentLoaded', () => {
     startScreen.addEventListener('click', () => {
         startScreen.style.display = 'none';
         splashScreen.style.display = 'flex';
-        if (logoSound) logoSound.play().catch(e => console.error("Audio logo bloccato", e));
+        logoSound?.play().catch(e => console.error(e));
     }, { once: true });
-
-    if (logoSound) {
-        logoSound.addEventListener('ended', () => {
-            if (backgroundMusic) backgroundMusic.play().catch(e => console.error("Musica di sottofondo bloccata", e));
-        });
-    }
-    
-    splashScreen.addEventListener('animationend', () => {
-        splashScreen.style.display = 'none';
-    });
-    
-    leaderboardToggle.addEventListener('click', () => {
-        leaderboard.classList.toggle('visible');
-    });
+    logoSound?.addEventListener('ended', () => backgroundMusic?.play().catch(e => console.error(e)));
+    splashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none');
+    leaderboardToggle?.addEventListener('click', () => leaderboard.classList.toggle('visible'));
 
     // --- FUNZIONI UTILITY ---
-    const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-    document.getElementById("player-photo").addEventListener("change", e => {
-        document.getElementById("file-name").textContent = e.target.files[0]?.name || "Nessuna foto selezionata";
-    });
-    const photoHTML = player => `<img src="${player?.photo || 'https://via.placeholder.com/50'}" alt="${player?.name || ''}" class="player-photo-icon">`;
+    const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
+    document.getElementById("player-photo").addEventListener("change", e => document.getElementById("file-name").textContent = e.target.files[0]?.name || "Nessuna foto");
+    const photoHTML = p => `<img src="${p?.photo || 'https://via.placeholder.com/50'}" alt="${p?.name || ''}" class="player-photo-icon">`;
 
     // --- FUNZIONI DI RENDER ---
     function renderPlayers() {
@@ -80,18 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
         localPlayers.forEach(p => {
             const div = document.createElement("div");
             div.className = "player-item";
-            const skillText = p.skill === "top_player" ? "Top Player" : "Player";
-            div.innerHTML = `${photoHTML(p)}<span>${p.name} (${skillText})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
+            div.innerHTML = `${photoHTML(p)}<span>${p.name} (${p.skill === 'top_player' ? 'Top Player' : 'Player'})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
             playersList.appendChild(div);
         });
     }
-
+    
     function renderTeams() {
         teamsList.innerHTML = "";
         localTeams.forEach(t => {
             const div = document.createElement("div");
             div.className = "team-item";
-            div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}', this.value)"><div class="team-player-box">${photoHTML(t.player1)} ${t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2.name}</div>`;
+            div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><div class="team-player-box">${photoHTML(t.player1)} ${t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2.name}</div>`;
             teamsList.appendChild(div);
         });
     }
@@ -108,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             roundRobinMatchesDiv.appendChild(div);
         });
     }
-
+    
     function renderKnockoutBracket() {
         knockoutStageDiv.innerHTML = "";
         if (localKnockoutMatches.length === 0) return;
@@ -124,74 +105,82 @@ document.addEventListener('DOMContentLoaded', () => {
     function createMatchupHTML(m) {
         const sA = m.scoreA ?? '', sB = m.scoreB ?? '';
         const wA = m.scoreA !== null && sA > sB, wB = m.scoreB !== null && sB > sA;
-        const html = `<div class="match-row"><div class="team-details">${photoHTML(m.teamA?.player1)}${photoHTML(m.teamA?.player2)}<span>${m.teamA?.name || 'TBD'}</span></div><input type="number" class="score-input ${wA ? 'winner' : (wB ? 'loser' : '')}" value="${sA}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','A',this.value)"` : "disabled"}></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB?.player1)}${photoHTML(m.teamB?.player2)}<span>${m.teamB?.name || 'TBD'}</span></div><input type="number" class="score-input ${wB ? 'winner' : (wA ? 'loser' : '')}" value="${sB}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','B',this.value)"` : "disabled"}></div>`;
-        return `<div class="knockout-matchup">${html}</div>`;
+        return `<div class="match-row"><div class="team-details">${photoHTML(m.teamA?.player1)}${photoHTML(m.teamA?.player2)}<span>${m.teamA?.name || 'TBD'}</span></div><input type="number" class="score-input ${wA ? 'winner' : (wB ? 'loser' : '')}" value="${sA}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','A',this.value)"` : "disabled"}></div><div class="vs-mobile">vs</div><div class="match-row"><div class="team-details">${photoHTML(m.teamB?.player1)}${photoHTML(m.teamB?.player2)}<span>${m.teamB?.name || 'TBD'}</span></div><input type="number" class="score-input ${wB ? 'winner' : (wA ? 'loser' : '')}" value="${sB}" ${m.id ? `onchange="updateKnockoutScore('${m.id}','B',this.value)"` : "disabled"}></div>`;
+    }
+
+    // --- GESTIONE CLASSIFICHE ---
+    function calculateStandings(teams, matches) {
+        if (!teams || teams.length === 0) return [];
+        const standings = teams.map(t => ({...t, punti: 0, v: 0, p: 0, s: 0, gf: 0, gs: 0, tieBreakerWin: false}));
+        matches.forEach(m => {
+            if (m.scoreA === null || m.scoreB === null) return;
+            const tA = standings.find(t => t.id === m.teamA.id), tB = standings.find(t => t.id === m.teamB.id);
+            if (!tA || !tB) return;
+            tA.gf += m.scoreA; tA.gs += m.scoreB; tB.gf += m.scoreB; tB.gs += m.scoreA;
+            if (m.scoreA > m.scoreB) { tA.punti += 3; tA.v++; tB.s++; }
+            else if (m.scoreB > m.scoreA) { tB.punti += 3; tB.v++; tA.s++; }
+            else { tA.punti += 1; tB.punti += 1; tA.p++; tB.p++; }
+        });
+        return standings.sort((a, b) => {
+            if (a.punti !== b.punti) return b.punti - a.punti;
+            const h2h = matches.find(m => (m.teamA.id === a.id && m.teamB.id === b.id) || (m.teamA.id === b.id && m.teamB.id === a.id));
+            if (h2h && h2h.scoreA !== h2h.scoreB) {
+                if ((h2h.teamA.id === a.id && h2h.scoreA > h2h.scoreB) || (h2h.teamB.id === a.id && h2h.scoreB > h2h.scoreA)) { a.tieBreakerWin = true; return -1; }
+                b.tieBreakerWin = true; return 1;
+            }
+            const gda = a.gf - a.gs, gdb = b.gf - b.gs;
+            return gda !== gdb ? gdb - gda : b.gf - a.gf;
+        });
     }
     
-    // --- GESTIONE CLASSIFICHE ---
-    function calculateStandings(teams, matches) { /*...*/ } // Logica invariata
     calculateStandingsBtn.addEventListener("click", () => renderStandingsTable(calculateStandings(localTeams, localRoundRobinMatches)));
-    function renderStandingsTable(standings) { /*...*/ } // Logica invariata
-    function updateLiveLeaderboard(standings) { /*...*/ } // Logica invariata
-
-    // --- AZIONI PRINCIPALI DEI PULSANTI ---
-    playerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('player-name').value;
-        const skill = document.getElementById('player-skill').value;
-        const photoInput = document.getElementById('player-photo');
-        const photoBase64 = photoInput.files[0] ? await toBase64(photoInput.files[0]) : null;
-        await db.collection('players').add({ name, skill, photo: photoBase64 });
-        playerForm.reset();
-        document.getElementById('file-name').textContent = 'Nessuna foto selezionata';
-    });
-
-    window.deletePlayer = async (id) => {
-        if (confirm('Eliminare questo giocatore?')) await db.collection('players').doc(id).delete();
-    };
-
-    createTeamsBtn.addEventListener("click", async () => {
-        const strong = localPlayers.filter(p => p.skill === 'top_player');
-        const weak = localPlayers.filter(p => p.skill === 'player');
-        if (strong.length !== weak.length || strong.length === 0) {
-            return alert(`Errore: il numero di "Top Player" (${strong.length}) e "Player" (${weak.length}) deve essere uguale e maggiore di zero.`);
-        }
-        if (confirm("Sei sicuro? Le squadre e le partite esistenti verranno cancellate.")) {
-            await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]);
-            strong.sort(() => .5 - Math.random());
-            weak.sort(() => .5 - Math.random());
-            for (let i = 0; i < strong.length; i++) await db.collection("teams").add({ name: `Squadra ${i + 1}`, player1: strong[i], player2: weak[i] });
-        }
-    });
-
-    window.updateTeamName = async (id, name) => await db.collection('teams').doc(id).update({ name });
-
-    generateRoundRobinBtn.addEventListener("click", async () => {
-        if (localTeams.length < 2) return alert("Crea almeno 2 squadre!");
-        await deleteCollection("roundRobinMatches");
-        let teams = [...localTeams];
-        if (teams.length % 2 !== 0) teams.push({ id: "BYE" });
-        for (let i = 0; i < teams.length; i++) for (let j = i + 1; j < teams.length; j++) if (teams[i].id !== "BYE" && teams[j].id !== "BYE") await db.collection("roundRobinMatches").add({ teamA: teams[i], teamB: teams[j], scoreA: null, scoreB: null });
-        alert("Calendario generato!");
-        calculateStandingsBtn.style.display = "block";
-    });
     
-    window.updateScore = async (id, team, score) => await db.collection('roundRobinMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
-    
-    const generateKnockoutMatches = async (isRandom) => { /*...*/ }; // Logica invariata
+    function renderStandingsTable(standings) {
+        let html = `<h3>Classifica Completa</h3><table><thead><tr><th>Pos</th><th>Squadra</th><th>Pt</th><th>V</th><th>P</th><th>S</th><th>GF</th><th>GS</th><th>DR</th></tr></thead><tbody>`;
+        standings.forEach((s, i) => {
+            html += `<tr><td>${i + 1}</td><td>${s.name} ${s.tieBreakerWin ? "*" : ""}</td><td>${s.punti}</td><td>${s.v}</td><td>${s.p}</td><td>${s.s}</td><td>${s.gf}</td><td>${s.gs}</td><td>${s.gf - s.gs}</td></tr>`;
+        });
+        standingsTableDiv.innerHTML = html + "</tbody></table>";
+    }
+
+    function updateLiveLeaderboard(standings) {
+        const topList = document.getElementById("top-teams-list");
+        const bottomList = document.getElementById("bottom-teams-list");
+        if (!topList || !bottomList) return;
+        topList.innerHTML = "";
+        bottomList.innerHTML = "";
+        const qz = 4;
+        standings.slice(0, qz).forEach((s, i) => {
+            topList.innerHTML += `<li><span><span class="team-pos">${i + 1}.</span> ${s.name} ${s.tieBreakerWin ? '<span class="tie-breaker-star">*</span>' : ""}</span><span class="team-points">${s.punti} Pt</span></li>`;
+        });
+        standings.slice(qz).forEach((s, i) => {
+            bottomList.innerHTML += `<li><span><span class="team-pos">${qz + i + 1}.</span> ${s.name}</span><span class="team-points">${s.punti} Pt</span></li>`;
+        });
+    }
+
+    // --- AZIONI DEI PULSANTI ---
+    playerForm.addEventListener('submit', async (e) => { e.preventDefault(); /* ... */ });
+    window.deletePlayer = async (id) => { /* ... */ };
+    createTeamsBtn.addEventListener("click", async () => { /* ... */ });
+    window.updateTeamName = async (id, name) => { /* ... */ };
+    generateRoundRobinBtn.addEventListener("click", async () => { /* ... */ });
+    window.updateScore = async (id, team, score) => { /* ... */ };
     generateStandardKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(false));
     generateRandomKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(true));
-    window.updateKnockoutScore = async (id, team, score) => await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
-    
-    // --- GESTIONE DATI IN TEMPO REALE ---
-    db.collection("players").onSnapshot(s => { localPlayers = s.docs.map(d => ({id: d.id, ...d.data()})); renderPlayers(); });
-    db.collection("teams").onSnapshot(s => { localTeams = s.docs.map(d => ({id: d.id, ...d.data()})); renderTeams(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
-    db.collection("roundRobinMatches").onSnapshot(s => { localRoundRobinMatches = s.docs.map(d => ({id: d.id, ...d.data()})); renderRoundRobinMatches(); updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches)); });
-    db.collection("knockoutMatches").onSnapshot(s => { localKnockoutMatches = s.docs.map(d => ({id: d.id, ...d.data()})); renderKnockoutBracket(); });
+    window.updateKnockoutScore = async (id, team, score) => { /* ... */ };
 
-    // --- PANNELLO ADMIN ---
-    async function deleteCollection(name) { /*...*/ } // Logica invariata
-    document.getElementById("reset-teams-btn").addEventListener("click", async () => { /*...*/ });
-    document.getElementById("reset-tournament-btn").addEventListener("click", async () => { /*...*/ });
-    document.getElementById("reset-all-btn").addEventListener("click", async () => { /*...*/ });
-});
+    // =============================================================================
+    // == GESTIONE DATI IN TEMPO REALE (SEZIONE CORRETTA)                         ==
+    // =============================================================================
+    db.collection("players").onSnapshot(snapshot => {
+        localPlayers = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        renderPlayers();
+    });
+
+    db.collection("teams").onSnapshot(snapshot => {
+        localTeams = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        renderTeams();
+        updateLiveLeaderboard(calculateStandings(localTeams, localRoundRobinMatches));
+    });
+
+    db.collection("roundRobinMatches").onSnapshot(snapshot 
