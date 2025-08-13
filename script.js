@@ -37,16 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let localPlayers = [], localTeams = [], localRoundRobinMatches = [], localKnockoutMatches = [];
 
     // --- GESTIONE INIZIALE E AUDIO ---
-    startScreen.addEventListener('click', () => {
-        startScreen.style.display = 'none';
-        splashScreen.style.display = 'flex';
-        logoSound?.play().catch(e => console.error(e));
-    }, { once: true });
+    startScreen.addEventListener('click', () => { /*...*/ }, { once: true });
     logoSound?.addEventListener('ended', () => backgroundMusic?.play().catch(e => console.error(e)));
     splashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none');
 
     // --- FUNZIONI UTILITY ---
-    const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
+    const toBase64 = f => new Promise((res, rej) => { /*...*/ });
     document.getElementById("player-photo").addEventListener("change", e => document.getElementById("file-name").textContent = e.target.files[0]?.name || "Nessuna foto");
     const photoHTML = p => `<img src="${p?.photo || 'https://via.placeholder.com/50'}" alt="${p?.name || ''}" class="player-photo-icon">`;
 
@@ -55,26 +51,27 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTeams() { /*...*/ }
     function renderRoundRobinMatches() { /*...*/ }
     function renderKnockoutBracket() { /*...*/ }
-    function createMatchupHTML(m) { /*...*/ }
+    function createMatchupHTML(m, isKnockout = false) { /*...*/ }
     function calculateStandings(teams, matches){ /*...*/ }
     function updateStandingsDisplay(standings) { /*...*/ }
 
     // =============================================================================
-    // == LOGICA DI GIOCO CON CONTROLLO PASSWORD                                  ==
+    // == NUOVA SEZIONE: LOGICA DI GIOCO CON CONTROLLO PASSWORD                   ==
     // =============================================================================
     const adminPassword = "55555555";
 
     function executeAdminAction(confirmationMessage, action) {
-        const password = prompt("Inserisci la password amministratore:");
+        const password = prompt("Password Amministratore:");
         if (password === adminPassword) {
             if (confirm(confirmationMessage)) {
                 action();
             }
-        } else if (password !== null) {
+        } else if (password !== null) { // se l'utente non ha premuto "Annulla"
             alert("Password errata!");
         }
     }
 
+    // L'aggiunta di un giocatore non richiede password
     playerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('player-name').value;
@@ -86,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('file-name').textContent = 'Nessuna foto selezionata';
     });
 
+    // Le altre azioni richiedono la password
     window.deletePlayer = (id) => {
         executeAdminAction('Sei sicuro di voler eliminare questo giocatore?', async () => {
             await db.collection('players').doc(id).delete();
@@ -106,8 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Squadre create con successo!");
         });
     });
-
-    window.updateTeamName = async (id, name) => await db.collection('teams').doc(id).update({ name });
     
     generateRoundRobinBtn.addEventListener("click", () => {
         executeAdminAction("Sei sicuro di voler generare i gironi?", async () => {
@@ -121,8 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    window.updateScore = async (id, team, score) => await db.collection('roundRobinMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
-    
     const generateKnockoutMatches = (isRandom) => {
         const message = isRandom ? "Generare semifinali con sorteggio CASUALE?" : "Generare semifinali STANDARD (1ªvs4ª, 2ªvs3ª)?";
         executeAdminAction(message, async () => {
@@ -144,6 +138,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     generateStandardKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(false));
     generateRandomKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(true));
+    
+    // Azioni non protette (aggiornamento nome e punteggio)
+    window.updateTeamName = async (id, name) => await db.collection('teams').doc(id).update({ name });
+    window.updateScore = async (id, team, score) => await db.collection('roundRobinMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
     window.updateKnockoutScore = async (id, team, score) => { await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null }); };
 
     // --- PANNELLO ADMIN (protetto da password) ---
@@ -151,10 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("reset-teams-btn").addEventListener("click", () => executeAdminAction("Sei sicuro? Cancellerà squadre e partite.", async () => await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])));
     document.getElementById("reset-tournament-btn").addEventListener("click", () => executeAdminAction("Sei sicuro? Manterrà solo i giocatori.", async () => await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])));
     document.getElementById("reset-all-btn").addEventListener("click", () => executeAdminAction("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?", async () => await Promise.all([deleteCollection("players"),deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])));
-
+    
     // --- GESTIONE DATI IN TEMPO REALE ---
     db.collection("players").onSnapshot(s => { localPlayers = s.docs.map(d => ({id: d.id, ...d.data()})); renderPlayers(); });
     db.collection("teams").onSnapshot(s => { localTeams = s.docs.map(d => ({id: d.id, ...d.data()})); renderTeams(); updateStandingsDisplay(calculateStandings(localTeams, localRoundRobinMatches)); });
     db.collection("roundRobinMatches").onSnapshot(s => { localRoundRobinMatches = s.docs.map(d => ({id: d.id, ...d.data()})); renderRoundRobinMatches(); updateStandingsDisplay(calculateStandings(localTeams, localRoundRobinMatches)); });
     db.collection("knockoutMatches").onSnapshot(s => { localKnockoutMatches = s.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.round - b.round || a.matchIndex - b.matchIndex); renderKnockoutBracket(); });
 });
+
