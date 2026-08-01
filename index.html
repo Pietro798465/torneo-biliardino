@@ -16,6 +16,11 @@
     <h2>CLICCA PER INIZIARE</h2>
 </div>
 
+<!-- Classifica Live a Scomparsa (per mobile) -->
+<div id="live-leaderboard">
+    <div id="leaderboard-toggle">🏆</div>
+</div>
+
 <!-- Splash Screen con il Logo -->
 <div id="splash-screen">
     <img src="logo.png" alt="Logo del Torneo" class="splash-logo">
@@ -37,9 +42,27 @@
             <option value="top_player">Top Player</option>
             <option value="player">Player</option>
         </select>
-        <div class="file-input-wrapper"><button type="button" class="btn-file">Scegli Foto</button><input type="file" id="player-photo" accept="image/*"><span id="file-name">Nessuna foto selezionata</span></div>
+        <div class="file-input-wrapper">
+            <button type="button" class="btn-file">Scegli Foto</button>
+            <input type="file" id="player-photo" accept="image/*">
+            <span id="file-name">Nessuna foto selezionata</span>
+        </div>
         <button type="submit">Aggiungi Giocatore</button>
     </form>
+
+    <!-- NUOVO CONTATORE GIOCATORI INTELIGENTE -->
+    <div id="player-counters" class="player-counters">
+        <div class="counter-badge top-player-badge">
+            Top Player: <strong id="top-player-count">0</strong>
+        </div>
+        <div class="counter-badge player-badge">
+            Player: <strong id="player-count">0</strong>
+        </div>
+        <div id="counter-status" class="counter-status-badge">
+            Nessun Giocatore
+        </div>
+    </div>
+
     <div id="players-list-container">
         <h3>Giocatori Registrati</h3>
         <div id="players-list"></div>
@@ -58,8 +81,6 @@
     <h2>3. Fase a Gironi</h2>
     <button id="generate-round-robin-btn">Genera Partite Gironi</button>
     <div id="round-robin-matches"></div>
-    
-    <!-- La classifica apparirà qui -->
     <div id="standings-section" style="display:none;"></div>
 </div>
 
