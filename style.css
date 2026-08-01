@@ -2,7 +2,7 @@
    IESPORTS TUNRAGIAN - EA SPORTS FOOSBALL THEME (2026 EDITION)
    ========================================================================== */
 
-/* --- FONT SPORTIVO AD IMPATTO VISIVO --- */
+/* --- IMPORT FONT SPORTIVO AD IMPATTO VISIVO --- */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,700;0,800;0,900;1,700;1,900&display=swap');
 
 /* --- PALETTA COLORI ISPIRATA AL LOGO --- */
@@ -112,7 +112,7 @@ input[type="text"]:focus, select:focus {
     box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
 }
 
-/* Rimozione freccette di default dai numeri */
+/* Rimozione freccette dai numeri */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -234,7 +234,7 @@ button:active { transform: translateY(0); }
     100% { opacity: 0; visibility: hidden; transform: scale(1.04); }
 }
 
-/* --- LISTA GIOCATORI --- */
+/* --- LISTA GIOCATORI E NUOVO CONTATORE --- */
 .file-input-wrapper {
     position: relative;
     overflow: hidden;
@@ -258,6 +258,67 @@ button:active { transform: translateY(0); }
     font-style: italic;
     color: var(--silver-muted);
     font-size: 14px;
+}
+
+/* STILI DEL CONTATORE INTELLIGENTE */
+.player-counters {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0 16px 0;
+    padding: 12px 16px;
+    background-color: #020617;
+    border: 1px solid var(--silver-border);
+    border-radius: var(--radius-md);
+}
+
+.counter-badge {
+    font-weight: 700;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.top-player-badge {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: var(--gold-star);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.player-badge {
+    background-color: rgba(56, 189, 248, 0.15);
+    color: var(--neon-cyan);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.counter-status-badge {
+    font-weight: 800;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background-color: #1e293b;
+    color: var(--silver-muted);
+    border: 1px solid var(--silver-border);
+}
+
+.counter-status-badge.balanced {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--success-neon);
+    border: 1px solid var(--success-neon);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+}
+
+.counter-status-badge.unbalanced {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: var(--danger-neon);
+    border: 1px solid var(--danger-neon);
 }
 
 .player-item {
@@ -550,7 +611,7 @@ button:active { transform: translateY(0); }
 
 /* ==========================================================================
    REGOLE RESPONSIVE PER SMARTPHONE
-   ========================================================================== */
+   ================================= */
 @media (max-width: 768px) {
     body { padding: 12px 8px; }
     .card {
@@ -597,4 +658,13 @@ button:active { transform: translateY(0); }
 
     .standings-table { font-size: 11px; }
     .standings-table th, .standings-table td { padding: 8px 4px; }
+
+    .player-counters {
+        gap: 8px;
+        padding: 10px;
+    }
+    .counter-badge, .counter-status-badge {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
 }
