@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // =============================================================================
-    // == CONFIGURAZIONE FIREBASE (NON MODIFICARE)                                ==
+    // == CONFIGURAZIONE FIREBASE                                                 ==
     // =============================================================================
     const firebaseConfig = {
       apiKey: "AIzaSyDZMPtTfv9cMIM8aznIY4Yggszz0dF-jOo",
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const splashScreen = document.getElementById('splash-screen');
     const logoSound = document.getElementById('logo-sound');
     const backgroundMusic = document.getElementById('background-music');
+    const leaderboard = document.getElementById('live-leaderboard');
     const playerForm = document.getElementById('player-form');
     const playersList = document.getElementById('players-list');
     const createTeamsBtn = document.getElementById('create-teams-btn');
@@ -37,41 +38,99 @@ document.addEventListener('DOMContentLoaded', () => {
     let localPlayers = [], localTeams = [], localRoundRobinMatches = [], localKnockoutMatches = [];
 
     // --- GESTIONE INIZIALE E AUDIO ---
-    startScreen.addEventListener('click', () => {
+    startScreen?.addEventListener('click', () => {
         startScreen.style.display = 'none';
-        splashScreen.style.display = 'flex';
+        if (splashScreen) splashScreen.style.display = 'flex';
         logoSound?.play().catch(e => console.error(e));
     }, { once: true });
     logoSound?.addEventListener('ended', () => backgroundMusic?.play().catch(e => console.error(e)));
-    splashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none');
+    splashScreen?.addEventListener('animationend', () => splashScreen.style.display = 'none');
 
-    // --- FUNZIONI UTILITY ---
-    const toBase64 = f => new Promise((res, rej) => { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = rej; });
-    document.getElementById("player-photo").addEventListener("change", e => document.getElementById("file-name").textContent = e.target.files[0]?.name || "Nessuna foto");
-    const photoHTML = p => `<img src="${p?.photo || 'https://via.placeholder.com/50'}" alt="${p?.name || ''}" class="player-photo-icon">`;
+    // --- FUNZIONE COMPRESSIONE BLINDATA (CON TIMEOUT DI SICUREZZA) ---
+    const compressImage = (file) => new Promise((resolve) => {
+        if (!file) return resolve(null);
+        
+        // Se il caricamento impiega più di 2.5 secondi, prosegui senza foto per evitare blocchi
+        const timer = setTimeout(() => {
+            console.warn("Elaborazione foto scaduta, proseguo senza foto.");
+            resolve(null);
+        }, 2500);
+
+        try {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    clearTimeout(timer);
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const MAX_SIZE = 150; // Miniatura 150x150 px super leggera
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_SIZE) {
+                                height = Math.round(height * (MAX_SIZE / width));
+                                width = MAX_SIZE;
+                            }
+                        } else {
+                            if (height > MAX_SIZE) {
+                                width = Math.round(width * (MAX_SIZE / height));
+                                height = MAX_SIZE;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.5));
+                    } catch (err) {
+                        resolve(null);
+                    }
+                };
+                img.onerror = () => { clearTimeout(timer); resolve(null); };
+            };
+            reader.onerror = () => { clearTimeout(timer); resolve(null); };
+        } catch (err) {
+            clearTimeout(timer);
+            resolve(null);
+        }
+    });
+
+    document.getElementById("player-photo")?.addEventListener("change", e => {
+        const nameSpan = document.getElementById("file-name");
+        if (nameSpan) nameSpan.textContent = e.target.files[0]?.name || "Nessuna foto selezionata";
+    });
+
+    const photoHTML = p => `<img src="${p?.photo || 'https://placehold.co/50x50/cccccc/ffffff?text=?'}" alt="${p?.name || ''}" class="player-photo-icon">`;
 
     // --- FUNZIONI DI RENDER ---
     function renderPlayers() {
+        if (!playersList) return;
         playersList.innerHTML = "";
         localPlayers.forEach(p => {
             const div = document.createElement("div");
             div.className = "player-item";
-            div.innerHTML = `${photoHTML(p)}<span>${p.name} (${p.skill === 'top_player' ? 'Top Player' : 'Player'})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
+            div.innerHTML = `${photoHTML(p)}<span>${p.name || 'Senza Nome'} (${p.skill === 'top_player' ? 'Top Player' : 'Player'})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
             playersList.appendChild(div);
         });
     }
     
     function renderTeams() {
+        if (!teamsList) return;
         teamsList.innerHTML = "";
         localTeams.forEach(t => {
             const div = document.createElement("div");
             div.className = "team-item";
-            div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><div class="team-player-box">${photoHTML(t.player1)} ${t.player1.name}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2.name}</div>`;
+            div.innerHTML = `<input type="text" class="team-name-input" value="${t.name}" onchange="updateTeamName('${t.id}',this.value)"><div class="team-player-box">${photoHTML(t.player1)} ${t.player1?.name || ''}</div><div class="team-player-box">${photoHTML(t.player2)} ${t.player2?.name || ''}</div>`;
             teamsList.appendChild(div);
         });
     }
     
     function renderRoundRobinMatches() {
+        if (!roundRobinMatchesDiv) return;
         roundRobinMatchesDiv.innerHTML = "";
         localRoundRobinMatches.forEach(m => {
             const div = document.createElement("div");
@@ -82,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function renderKnockoutBracket() {
+        if (!knockoutStageDiv) return;
         knockoutStageDiv.innerHTML = "";
         if (localKnockoutMatches.length === 0) return;
         
@@ -122,17 +182,112 @@ document.addEventListener('DOMContentLoaded', () => {
         
         return isKnockout ? `<div class="match-item">${desktopHTML}${mobileHTML}</div>` : desktopHTML + mobileHTML;
     }
-    
-    // --- LOGICA DI GIOCO ---
-    playerForm.addEventListener('submit', async (e) => { e.preventDefault(); const name = document.getElementById('player-name').value; const skill = document.getElementById('player-skill').value; const photoInput = document.getElementById('player-photo'); const photoBase64 = photoInput.files[0] ? await toBase64(photoInput.files[0]) : null; await db.collection('players').add({ name, skill, photo: photoBase64 }); playerForm.reset(); document.getElementById('file-name').textContent = 'Nessuna foto selezionata'; });
-    window.deletePlayer = async (id) => { if (confirm('Eliminare questo giocatore?')) await db.collection('players').doc(id).delete(); };
-    createTeamsBtn.addEventListener("click", async () => { const strong = localPlayers.filter(p => p.skill === 'top_player'); const weak = localPlayers.filter(p => p.skill === 'player'); if (strong.length !== weak.length || strong.length === 0) return alert(`Errore: il numero di "Top Player" (${strong.length}) e "Player" (${weak.length}) deve essere uguale e maggiore di zero.`); if (confirm("Sei sicuro? Le squadre e le partite esistenti verranno cancellate.")) { await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]); strong.sort(() => .5 - Math.random()); weak.sort(() => .5 - Math.random()); for (let i = 0; i < strong.length; i++) await db.collection("teams").add({ name: `Squadra ${i + 1}`, player1: strong[i], player2: weak[i] }); } });
+
+    // --- CONTROLLO PASSWORD ---
+    const adminPassword = "55555555";
+    function executeAdminAction(confirmationMessage, action) {
+        const password = prompt("Inserisci la password amministratore:");
+        if (password === adminPassword) {
+            if (confirm(confirmationMessage)) {
+                action();
+            }
+        } else if (password !== null) {
+            alert("Password errata!");
+        }
+    }
+
+    // --- AGGIUNTA GIOCATORE CON GESTIONE ERRORI BLAINDATA ---
+    playerForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = playerForm.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+
+        try {
+            const name = document.getElementById('player-name').value.trim();
+            const skill = document.getElementById('player-skill').value;
+            const photoInput = document.getElementById('player-photo');
+            
+            let photoBase64 = null;
+            if (photoInput && photoInput.files && photoInput.files[0]) {
+                photoBase64 = await compressImage(photoInput.files[0]);
+            }
+
+            await db.collection('players').add({
+                name: name,
+                skill: skill,
+                photo: photoBase64
+            });
+
+            playerForm.reset();
+            const fileNameSpan = document.getElementById('file-name');
+            if (fileNameSpan) fileNameSpan.textContent = 'Nessuna foto selezionata';
+            alert(`Giocatore "${name}" registrato con successo!`);
+        } catch (err) {
+            console.error("Errore salvataggio giocatore:", err);
+            alert("Errore durante il salvataggio: " + err.message);
+        } finally {
+            if (submitBtn) submitBtn.disabled = false;
+        }
+    });
+
+    window.deletePlayer = (id) => {
+        executeAdminAction('Sei sicuro di voler eliminare questo giocatore?', async () => {
+            await db.collection('players').doc(id).delete();
+        });
+    };
+
+    createTeamsBtn?.addEventListener("click", () => {
+        executeAdminAction("Sei sicuro? Le squadre e le partite esistenti verranno cancellate.", async () => {
+            const strong = localPlayers.filter(p => p.skill === 'top_player');
+            const weak = localPlayers.filter(p => p.skill === 'player');
+            if (strong.length !== weak.length || strong.length === 0) {
+                return alert(`Errore: il numero di "Top Player" (${strong.length}) e "Player" (${weak.length}) deve essere uguale e maggiore di zero.`);
+            }
+            await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")]);
+            strong.sort(() => .5 - Math.random());
+            weak.sort(() => .5 - Math.random());
+            for (let i = 0; i < strong.length; i++) await db.collection("teams").add({ name: `Squadra ${i + 1}`, player1: strong[i], player2: weak[i] });
+            alert("Squadre create con successo!");
+        });
+    });
+
     window.updateTeamName = async (id, name) => await db.collection('teams').doc(id).update({ name });
-    generateRoundRobinBtn.addEventListener("click", async () => { if (localTeams.length < 2) return alert("Crea almeno 2 squadre!"); await deleteCollection("roundRobinMatches"); let teams = [...localTeams]; if (teams.length % 2 !== 0) teams.push({ id: "BYE" }); for (let i = 0; i < teams.length; i++) for (let j = i + 1; j < teams.length; j++) if (teams[i].id !== "BYE" && teams[j].id !== "BYE") await db.collection("roundRobinMatches").add({ teamA: teams[i], teamB: teams[j], scoreA: null, scoreB: null }); alert("Calendario generato!"); standingsSection.style.display = "block"; });
+    
+    generateRoundRobinBtn?.addEventListener("click", () => {
+        executeAdminAction("Sei sicuro di voler generare i gironi?", async () => {
+            if (localTeams.length < 2) return alert("Crea almeno 2 squadre!");
+            await deleteCollection("roundRobinMatches");
+            let teams = [...localTeams];
+            if (teams.length % 2 !== 0) teams.push({ id: "BYE" });
+            for (let i = 0; i < teams.length; i++) for (let j = i + 1; j < teams.length; j++) if (teams[i].id !== "BYE" && teams[j].id !== "BYE") await db.collection("roundRobinMatches").add({ teamA: teams[i], teamB: teams[j], scoreA: null, scoreB: null });
+            alert("Calendario generato!");
+            if (standingsSection) standingsSection.style.display = "block";
+        });
+    });
+
     window.updateScore = async (id, team, score) => await db.collection('roundRobinMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null });
-    const generateKnockoutMatches = async (isRandom) => { const numQualifiers = 4; const standings = calculateStandings(localTeams, localRoundRobinMatches); if (standings.length < numQualifiers) return alert(`Servono almeno ${numQualifiers} squadre.`); const message = isRandom ? "Generare semifinali con sorteggio CASUALE?" : "Generare semifinali STANDARD (1ªvs4ª, 2ªvs3ª)?"; if (!confirm(message)) return; await deleteCollection('knockoutMatches'); let qualified = standings.slice(0, numQualifiers); if (isRandom) qualified.sort(() => 0.5 - Math.random()); const batch = db.batch(); const sf1Ref = db.collection('knockoutMatches').doc(); batch.set(sf1Ref, { round: 1, matchIndex: 0, teamA: qualified[0], teamB: qualified[3], scoreA: null, scoreB: null, id: sf1Ref.id }); const sf2Ref = db.collection('knockoutMatches').doc(); batch.set(sf2Ref, { round: 1, matchIndex: 1, teamA: qualified[1], teamB: qualified[2], scoreA: null, scoreB: null, id: sf2Ref.id }); await batch.commit(); alert('Tabellone generato!'); };
-    generateStandardKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(false));
-    generateRandomKnockoutBtn.addEventListener('click', () => generateKnockoutMatches(true));
+    
+    const generateKnockoutMatches = (isRandom) => {
+        const message = isRandom ? "Generare semifinali con sorteggio CASUALE?" : "Generare semifinali STANDARD (1ªvs4ª, 2ªvs3ª)?";
+        executeAdminAction(message, async () => {
+            const numQualifiers = 4;
+            const standings = calculateStandings(localTeams, localRoundRobinMatches);
+            if (standings.length < numQualifiers) return alert(`Servono almeno ${numQualifiers} squadre.`);
+            await deleteCollection('knockoutMatches');
+            let qualified = standings.slice(0, numQualifiers);
+            if (isRandom) qualified.sort(() => 0.5 - Math.random());
+            const batch = db.batch();
+            const sf1Ref = db.collection('knockoutMatches').doc();
+            batch.set(sf1Ref, { round: 1, matchIndex: 0, teamA: qualified[0], teamB: qualified[3], scoreA: null, scoreB: null, id: sf1Ref.id });
+            const sf2Ref = db.collection('knockoutMatches').doc();
+            batch.set(sf2Ref, { round: 1, matchIndex: 1, teamA: qualified[1], teamB: qualified[2], scoreA: null, scoreB: null, id: sf2Ref.id });
+            await batch.commit();
+            alert('Tabellone generato!');
+        });
+    };
+
+    generateStandardKnockoutBtn?.addEventListener('click', () => generateKnockoutMatches(false));
+    generateRandomKnockoutBtn?.addEventListener('click', () => generateKnockoutMatches(true));
     window.updateKnockoutScore = async (id, team, score) => { await db.collection('knockoutMatches').doc(id).update({ [team === 'A' ? 'scoreA' : 'scoreB']: parseInt(score) || null }); };
 
     // --- GESTIONE CLASSIFICHE ---
@@ -162,21 +317,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function updateStandingsDisplay(standings) {
+        if (!standingsSection) return;
         if (standings.length === 0 || localRoundRobinMatches.length === 0) {
             standingsSection.style.display = 'none';
             return;
         }
         standingsSection.style.display = 'block';
-        
         let tableHTML = `<h3 class="standings-title">🏆 CLASSIFICA GIRONI 🏆</h3><table class="standings-table"><thead><tr><th>Pos</th><th>Squadra</th><th>Vittorie</th><th>GF</th><th>GS</th><th>DR</th></tr></thead><tbody>`;
         standings.forEach((s, i) => {
             tableHTML += `<tr><td>${i + 1}</td><td>${s.name} ${s.tieBreakerWin ? '<span class="tie-breaker-star">*</span>' : ''}</td><td>${s.vittorie}</td><td>${s.gf}</td><td>${s.gs}</td><td>${s.gf - s.gs}</td></tr>`;
         });
         tableHTML += '</tbody></table>';
-        
         standingsSection.innerHTML = tableHTML;
-        leaderboard.innerHTML = `<div id="leaderboard-toggle">🏆</div>` + tableHTML; // Copia la tabella anche nella versione a scomparsa
-        leaderboard.querySelector('#leaderboard-toggle').addEventListener('click', () => leaderboard.classList.toggle('visible'));
+        
+        if (leaderboard) {
+            leaderboard.innerHTML = `<div id="leaderboard-toggle">🏆</div>` + tableHTML;
+            leaderboard.querySelector('#leaderboard-toggle')?.addEventListener('click', () => leaderboard.classList.toggle('visible'));
+        }
     }
     
     // --- GESTIONE DATI IN TEMPO REALE ---
@@ -185,10 +342,14 @@ document.addEventListener('DOMContentLoaded', () => {
     db.collection("roundRobinMatches").onSnapshot(s => { localRoundRobinMatches = s.docs.map(d => ({id: d.id, ...d.data()})); renderRoundRobinMatches(); updateStandingsDisplay(calculateStandings(localTeams, localRoundRobinMatches)); });
     db.collection("knockoutMatches").onSnapshot(s => { localKnockoutMatches = s.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.round - b.round || a.matchIndex - b.matchIndex); renderKnockoutBracket(); });
 
-    // --- PANNELLO ADMIN ---
-    async function deleteCollection(name){const batch=db.batch(),snapshot=await db.collection(name).get();snapshot.docs.forEach(doc=>batch.delete(doc.ref));try{await batch.commit()}catch(e){console.error("Errore eliminazione:",e)}}
-    document.getElementById("reset-teams-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Cancellerà squadre e partite.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
-    document.getElementById("reset-tournament-btn").addEventListener("click",async()=>{confirm("Sei sicuro? Manterrà solo i giocatori.")&&await Promise.all([deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
-    document.getElementById("reset-all-btn").addEventListener("click",async()=>{confirm("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?")&&await Promise.all([deleteCollection("players"),deleteCollection("teams"),deleteCollection("roundRobinMatches"),deleteCollection("knockoutMatches")])});
+    // --- PANNELLO ADMIN (PROTETTO DA PASSWORD) ---
+    async function deleteCollection(name) {
+        const batch = db.batch();
+        const snapshot = await db.collection(name).get();
+        snapshot.docs.forEach(doc => batch.delete(doc.ref));
+        try { await batch.commit(); } catch (e) { console.error("Errore eliminazione:", e); }
+    }
+    document.getElementById("reset-teams-btn")?.addEventListener("click", () => executeAdminAction("Sei sicuro? Cancellerà squadre e partite.", async () => await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")])));
+    document.getElementById("reset-tournament-btn")?.addEventListener("click", () => executeAdminAction("Sei sicuro? Manterrà solo i giocatori.", async () => await Promise.all([deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")])));
+    document.getElementById("reset-all-btn")?.addEventListener("click", () => executeAdminAction("ATTENZIONE! Sei sicuro di CANCELLARE TUTTO?", async () => await Promise.all([deleteCollection("players"), deleteCollection("teams"), deleteCollection("roundRobinMatches"), deleteCollection("knockoutMatches")])));
 });
-
