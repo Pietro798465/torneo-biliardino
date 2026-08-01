@@ -46,11 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
     logoSound?.addEventListener('ended', () => backgroundMusic?.play().catch(e => console.error(e)));
     splashScreen?.addEventListener('animationend', () => splashScreen.style.display = 'none');
 
-    // --- FUNZIONE COMPRESSIONE BLINDATA (CON TIMEOUT DI SICUREZZA) ---
+    // --- FUNZIONE RIDIMENSIONAMENTO E COMPRESSIONE FOTO ---
     const compressImage = (file) => new Promise((resolve) => {
         if (!file) return resolve(null);
         
-        // Se il caricamento impiega più di 2.5 secondi, prosegui senza foto per evitare blocchi
         const timer = setTimeout(() => {
             console.warn("Elaborazione foto scaduta, proseguo senza foto.");
             resolve(null);
@@ -66,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearTimeout(timer);
                     try {
                         const canvas = document.createElement('canvas');
-                        const MAX_SIZE = 150; // Miniatura 150x150 px super leggera
+                        const MAX_SIZE = 150;
                         let width = img.width;
                         let height = img.height;
 
@@ -106,6 +105,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const photoHTML = p => `<img src="${p?.photo || 'https://placehold.co/50x50/cccccc/ffffff?text=?'}" alt="${p?.name || ''}" class="player-photo-icon">`;
 
+    // --- AGGIORNAMENTO CONTATORE GIOCATORI ---
+    function updatePlayerCounters() {
+        const topCount = localPlayers.filter(p => p.skill === 'top_player').length;
+        const playerCount = localPlayers.filter(p => p.skill === 'player').length;
+
+        const topEl = document.getElementById('top-player-count');
+        const playerEl = document.getElementById('player-count');
+        const statusEl = document.getElementById('counter-status');
+
+        if (topEl) topEl.textContent = topCount;
+        if (playerEl) playerEl.textContent = playerCount;
+
+        if (statusEl) {
+            if (topCount === 0 && playerCount === 0) {
+                statusEl.textContent = "Nessun Giocatore";
+                statusEl.className = "counter-status-badge";
+            } else if (topCount === playerCount) {
+                statusEl.textContent = "✔ BILANCIATI";
+                statusEl.className = "counter-status-badge balanced";
+            } else {
+                const diff = Math.abs(topCount - playerCount);
+                const missingSkill = topCount < playerCount ? "Top Player" : "Player";
+                statusEl.textContent = `⚠️ MANCA ${diff} ${missingSkill.toUpperCase()}`;
+                statusEl.className = "counter-status-badge unbalanced";
+            }
+        }
+    }
+
     // --- FUNZIONI DI RENDER ---
     function renderPlayers() {
         if (!playersList) return;
@@ -116,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             div.innerHTML = `${photoHTML(p)}<span>${p.name || 'Senza Nome'} (${p.skill === 'top_player' ? 'Top Player' : 'Player'})</span><button class="btn-danger" onclick="deletePlayer('${p.id}')">X</button>`;
             playersList.appendChild(div);
         });
+        updatePlayerCounters();
     }
     
     function renderTeams() {
@@ -196,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- AGGIUNTA GIOCATORE CON GESTIONE ERRORI BLAINDATA ---
+    // --- AZIONI UTENTE ---
     playerForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = playerForm.querySelector('button[type="submit"]');
